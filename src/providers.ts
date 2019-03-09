@@ -32,21 +32,29 @@ export class BetterSearchProvider implements TextDocumentContentProvider, Docume
     }
 
     private renderHeader(docUriString: string, state: RenderState, result: search.SearchResult): string {
-        state.line += 3;
-        state.filePath = result.filePath;
-
-        const range = new Range(state.line - 1, 0, state.line - 1, result.filePath.length + 6);
+        const range = new Range(state.line + 2, 0, state.line + 2, result.filePath.length + 6);
         const uri = Uri.parse(`file://${workspace.rootPath}/${result.filePath}`);
         this._links[docUriString].push(new DocumentLink(range, uri));
+
+        state.line += 3;
+        state.filePath = result.filePath;
         return `\n\nFile: ${result.filePath}`;
     }
 
     private renderContext(docUriString: string, state: RenderState, result: search.SearchResult): string {
+        const range = new Range(state.line, 0, state.line, result.line.toString().length);
+        const uri = Uri.parse(`file://${workspace.rootPath}/${result.filePath}#L${result.line}`);
+        this._links[docUriString].push(new DocumentLink(range, uri));
+
         state.line++;
         return `${result.line}   ${result.content}`;
     }
 
     private renderMatch(docUriString: string, state: RenderState, result: search.SearchResult): string {
+        const range = new Range(state.line, 0, state.line, result.line.toString().length);
+        const uri = Uri.parse(`file://${workspace.rootPath}/${result.filePath}#L${result.line}`);
+        this._links[docUriString].push(new DocumentLink(range, uri));
+
         state.line++;
         return `${result.line}   ${result.content}`;
     }
