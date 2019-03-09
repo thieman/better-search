@@ -39,7 +39,6 @@ export class BetterSearchProvider implements TextDocumentContentProvider, Docume
 
         this._subscriptions = workspace.onDidCloseTextDocument(doc => {
             if (this._readyToDispose[doc.uri.toString()]) {
-                console.log('disposing');
                 delete this._languages[doc.uri.toString()];
                 this._links[doc.uri.toString()] = [];
                 this._highlights[doc.uri.toString()] = [];
@@ -182,7 +181,8 @@ export class BetterSearchProvider implements TextDocumentContentProvider, Docume
     }
 
     async provideDocumentLinks(document: TextDocument, token: CancellationToken): Promise<DocumentLink[]> {
-        // Hack, not sure where the best place is to run this
+        // Hack, not sure where the best place is to run this. Can't run it
+        // in the content provider since I don't have an actual TextDocument yet
         const language = this._languages[document.uri.toString()];
         if (language !== undefined) {
             await languages.setTextDocumentLanguage(document, language as string);
