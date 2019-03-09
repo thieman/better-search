@@ -1,5 +1,5 @@
 import * as querystring from 'querystring';
-import { CancellationToken, DocumentLink, DocumentLinkProvider, ProviderResult, TextDocument, TextDocumentContentProvider, Uri, Range, workspace, Disposable } from 'vscode';
+import { CancellationToken, DocumentLink, DocumentLinkProvider, ProviderResult, TextDocument, TextDocumentContentProvider, Uri, Range, workspace, Disposable, DocumentHighlightProvider, DocumentHighlight, DocumentHighlightKind, Position } from 'vscode';
 import * as search from './search';
 
 interface RenderState {
@@ -7,14 +7,22 @@ interface RenderState {
     filePath: string;
 }
 
-export class BetterSearchProvider implements TextDocumentContentProvider, DocumentLinkProvider  {
+export class BetterSearchProvider implements TextDocumentContentProvider, DocumentLinkProvider, DocumentHighlightProvider {
     _links: {[docUri: string]: DocumentLink[]};
+    _highlights: {[docUri: string]: DocumentHighlight[]};
+    _queryRegexes: {[docUri: string]: RegExp};
     _subscriptions: Disposable;
 
     constructor() {
         this._links = {};
+        this._highlights = {};
+        this._queryRegexes = {};
         this._subscriptions = workspace.onDidCloseTextDocument(doc => {
             this._links[doc.uri.toString()] = [];
+            this._highlights[doc.uri.toString()] = [];
+            for (let key in this._queryRegexes) {
+                delete this._queryRegexes[key];
+            }
         });
     }
 
@@ -32,13 +40,13 @@ export class BetterSearchProvider implements TextDocumentContentProvider, Docume
     }
 
     private renderHeader(docUriString: string, state: RenderState, result: search.SearchResult): string {
-        const range = new Range(state.line + 2, 0, state.line + 2, result.filePath.length + 6);
+        const range = new Range(state.line + 1, 0, state.line + 1, result.filePath.length + 6);
         const uri = Uri.parse(`file://${workspace.rootPath}/${result.filePath}`);
         this._links[docUriString].push(new DocumentLink(range, uri));
 
-        state.line += 3;
+        state.line += 2;
         state.filePath = result.filePath;
-        return `\n\nFile: ${result.filePath}`;
+        return `\nFile: ${result.filePath}`;
     }
 
     private renderContext(docUriString: string, state: RenderState, result: search.SearchResult): string {
@@ -51,9 +59,17 @@ export class BetterSearchProvider implements TextDocumentContentProvider, Docume
     }
 
     private renderMatch(docUriString: string, state: RenderState, result: search.SearchResult): string {
-        const range = new Range(state.line, 0, state.line, result.line.toString().length);
+        const linkRange = new Range(state.line, 0, state.line, result.line.toString().length);
         const uri = Uri.parse(`file://${workspace.rootPath}/${result.filePath}#L${result.line}`);
-        this._links[docUriString].push(new DocumentLink(range, uri));
+        this._links[docUriString].push(new DocumentLink(linkRange, uri));
+
+        // BUG: Only highlights the first match. Too frustrated with JS regexes to fix right now
+        const regexMatch = result.content.match(this._queryRegexes[docUriString]);
+        if (regexMatch !== null) {
+            const padding = result.line.toString().length + 3;
+            const highlightRange = new Range(state.line, padding + regexMatch.index!, state.line, padding + regexMatch.index! + regexMatch[0].length);
+            this._highlights[docUriString].push(new DocumentHighlight(highlightRange, DocumentHighlightKind.Read));
+        }
 
         state.line++;
         return `${result.line}   ${result.content}`;
@@ -64,12 +80,15 @@ export class BetterSearchProvider implements TextDocumentContentProvider, Docume
     }
 
     provideTextDocumentContent(uri: Uri, token: CancellationToken): ProviderResult<string> {
-        const uriString = uri.toString();
-        this._links[uriString] = [];
-
         const params = querystring.parse(uri.query);
+        const uriString = uri.toString();
+
+        this._links[uriString] = [];
+        this._highlights[uriString] = [];
+        this._queryRegexes[uriString] = new RegExp(`(${params.query})`);
+
         const opts: search.SearchOptions = {
-            query: params['query'] as string,
+            query: params.query as string,
         };
 
         return search.runSearch(opts).then((results: (search.SearchResult | search.ResultSeparator)[]) => {
@@ -103,5 +122,9 @@ export class BetterSearchProvider implements TextDocumentContentProvider, Docume
 
     provideDocumentLinks(document: TextDocument, token: CancellationToken): ProviderResult<DocumentLink[]> {
         return this._links[document.uri.toString()];
+    }
+
+    provideDocumentHighlights(document: TextDocument, position: Position, token: CancellationToken): ProviderResult<DocumentHighlight[]> {
+        return this._highlights[document.uri.toString()];
     }
 }

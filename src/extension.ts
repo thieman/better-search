@@ -8,6 +8,7 @@ export function activate(context: vscode.ExtensionContext) {
 	const providerRegistrations = vscode.Disposable.from(
 		vscode.workspace.registerTextDocumentContentProvider(BetterSearchProvider.scheme, provider),
 		vscode.languages.registerDocumentLinkProvider({scheme: BetterSearchProvider.scheme}, provider),
+		vscode.languages.registerDocumentHighlightProvider({scheme: BetterSearchProvider.scheme}, provider),
 	);
 
 	let disposable = vscode.commands.registerCommand('betterSearch.search', commands.search);

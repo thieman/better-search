@@ -10,7 +10,7 @@ function buildUri(query: string): vscode.Uri {
     return vscode.Uri.parse(`${BetterSearchProvider.scheme}:${sluggify(query)}.better?query=${query}`);
 }
 
-export function search() {
+export function search(): void {
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
         return;
@@ -19,7 +19,7 @@ export function search() {
     const defaultSearch = getWordAtPoint(editor);
 
     // Folder / location handling?
-    
+
     vscode.window.showInputBox({
         value: defaultSearch,
         valueSelection: [0, (defaultSearch || '').length],

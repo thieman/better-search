@@ -59,6 +59,8 @@ function parseResults(ripgrepStdout: string): (SearchResult | ResultSeparator)[]
             }
         }
     }
+
+    results.pop();  // removes extraneous separator
     return results;
 }
 
@@ -66,13 +68,18 @@ export function runSearch(opts: SearchOptions): Promise<(SearchResult | ResultSe
     return new Promise<(SearchResult | ResultSeparator)[]>((resolve, reject) => {
         const execOptions = {
             cwd: vscode.workspace.rootPath,
+            maxBuffer: 1024 * 1000,
         };
 
         const command = `${rgPath} ${quote(opts.query)} --color never --no-heading --column --line-number --context 2`;
 
         child.exec(command, execOptions, (err: Error | null, stdout: string, stderr: string): void => {
             if (err !== null) { reject(err); }
-            resolve(parseResults(stdout));
+            try {
+                resolve(parseResults(stdout));
+            } catch(error) {
+                reject(error);
+            }
         });
     });
 }
