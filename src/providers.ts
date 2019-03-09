@@ -1,6 +1,21 @@
 import * as querystring from 'querystring';
-import { CancellationToken, DocumentLink, DocumentLinkProvider, ProviderResult, TextDocument, TextDocumentContentProvider, Uri, Range, workspace, Disposable, DocumentHighlightProvider, DocumentHighlight, DocumentHighlightKind, Position } from 'vscode';
+import { CancellationToken, DocumentLink, DocumentLinkProvider, ProviderResult, TextDocument,
+    TextDocumentContentProvider, Uri, Range, workspace, Disposable, DocumentHighlightProvider, DocumentHighlight,
+    DocumentHighlightKind, Position, LanguageConfiguration, languages } from 'vscode';
 import * as search from './search';
+
+const LANGUAGE_EXTENSIONS: {[lang: string]: string} = {
+    'ts': 'typescript',
+    'js': 'javascript',
+    'py': 'python',
+    'java': 'java',
+    'clj': 'clojure',
+    'go': 'go',
+    'html': 'html',
+    'md': 'markdown',
+    'r': 'r',
+    'sql': 'sql',
+};
 
 interface RenderState {
     line: number;
@@ -8,20 +23,30 @@ interface RenderState {
 }
 
 export class BetterSearchProvider implements TextDocumentContentProvider, DocumentLinkProvider, DocumentHighlightProvider {
+    _languages: {[docUri: string]: LanguageConfiguration | undefined};
     _links: {[docUri: string]: DocumentLink[]};
     _highlights: {[docUri: string]: DocumentHighlight[]};
     _queryRegexes: {[docUri: string]: RegExp};
+    _readyToDispose: {[docUri: string]: boolean};
     _subscriptions: Disposable;
 
     constructor() {
+        this._languages = {};
         this._links = {};
         this._highlights = {};
         this._queryRegexes = {};
+        this._readyToDispose = {};
+
         this._subscriptions = workspace.onDidCloseTextDocument(doc => {
-            this._links[doc.uri.toString()] = [];
-            this._highlights[doc.uri.toString()] = [];
-            for (let key in this._queryRegexes) {
-                delete this._queryRegexes[key];
+            if (this._readyToDispose[doc.uri.toString()]) {
+                console.log('disposing');
+                delete this._languages[doc.uri.toString()];
+                this._links[doc.uri.toString()] = [];
+                this._highlights[doc.uri.toString()] = [];
+                for (let key in this._queryRegexes) {
+                    delete this._queryRegexes[key];
+                }
+                this._readyToDispose[doc.uri.toString()] = false;
             }
         });
     }
@@ -32,6 +57,40 @@ export class BetterSearchProvider implements TextDocumentContentProvider, Docume
 
     static get scheme(): string {
         return 'BetterSearch';
+    }
+
+    private async detectLanguage(results: (search.SearchResult | search.ResultSeparator)[]): Promise<LanguageConfiguration | undefined> {
+        const files: {[filePath: string]: boolean} = {};
+        for (let resultUnion of results) {
+            if (search.isResultSeparator(resultUnion)) {
+                continue;
+            }
+            const r = resultUnion as search.SearchResult;
+            files[r.filePath] = true;
+        }
+
+        const extensions: {[extension: string]: number} = {};
+        for (let filePath in files) {
+            let parts = filePath.split('.');
+            const extension = parts[parts.length - 1];
+            extensions[extension] = extensions[extension] === undefined ? 1 : extensions[extension] + 1;
+        }
+
+        // TODO: I couldn't find a way to get VSCode to tell you about the
+        // file extensions it knows about targeting its installed languages.
+        // Hard-coding some of the major ones here now, can flesh it out later
+        // or find a better way to do it if VSCode ships an API.
+        let match: LanguageConfiguration | undefined = undefined;
+        let highestCount = 0;
+        for (let extension in extensions) {
+            const count = extensions[extension];
+            if (count > highestCount && LANGUAGE_EXTENSIONS[extension] !== undefined) {
+                highestCount = count;
+                match = LANGUAGE_EXTENSIONS[extension] as LanguageConfiguration;
+            }
+        }
+
+        return match;
     }
 
     private renderSeparator(state: RenderState): string {
@@ -79,7 +138,7 @@ export class BetterSearchProvider implements TextDocumentContentProvider, Docume
         return rawResults.join('\n');
     }
 
-    provideTextDocumentContent(uri: Uri, token: CancellationToken): ProviderResult<string> {
+    async provideTextDocumentContent(uri: Uri, token: CancellationToken): Promise<string> {
         const params = querystring.parse(uri.query);
         const uriString = uri.toString();
 
@@ -91,36 +150,46 @@ export class BetterSearchProvider implements TextDocumentContentProvider, Docume
             query: params.query as string,
         };
 
-        return search.runSearch(opts).then((results: (search.SearchResult | search.ResultSeparator)[]) => {
-            let state: RenderState = {line: 0, filePath: ''};
+        const results = await search.runSearch(opts);
+        const language = await this.detectLanguage(results);
+        this._languages[uriString] = language;
 
-            const rawResults = results.map(function(this: BetterSearchProvider, resultUnion: (search.SearchResult | search.ResultSeparator)): string {
-                if (search.isResultSeparator(resultUnion)) {
-                    return this.renderSeparator(state);
-                }
+        let state: RenderState = {line: 0, filePath: ''};
 
-                // Compiler is freaking out if I try to do this in an else, not sure why
-                let result = (resultUnion as search.SearchResult);
-                const thisResult: string[] = [];
+        const rawResults = results.map(function(this: BetterSearchProvider, resultUnion: (search.SearchResult | search.ResultSeparator)): string {
+            if (search.isResultSeparator(resultUnion)) {
+                return this.renderSeparator(state);
+            }
 
-                if (state.filePath !== result.filePath) {
-                    thisResult.push(this.renderHeader(uriString, state, result));
-                }
+            // Compiler is freaking out if I try to do this in an else, not sure why
+            let result = (resultUnion as search.SearchResult);
+            const thisResult: string[] = [];
 
-                if (result.isContext) {
-                    thisResult.push(this.renderContext(uriString, state, result));
-                } else {
-                    thisResult.push(this.renderMatch(uriString, state, result));
-                }
+            if (state.filePath !== result.filePath) {
+                thisResult.push(this.renderHeader(uriString, state, result));
+            }
 
-                return thisResult.join('\n');
-            }.bind(this));
+            if (result.isContext) {
+                thisResult.push(this.renderContext(uriString, state, result));
+            } else {
+                thisResult.push(this.renderMatch(uriString, state, result));
+            }
 
-            return this.formatResults(rawResults);
-        });
+            return thisResult.join('\n');
+        }.bind(this));
+
+        return this.formatResults(rawResults);
     }
 
-    provideDocumentLinks(document: TextDocument, token: CancellationToken): ProviderResult<DocumentLink[]> {
+    async provideDocumentLinks(document: TextDocument, token: CancellationToken): Promise<DocumentLink[]> {
+        // Hack, not sure where the best place is to run this
+        const language = this._languages[document.uri.toString()];
+        if (language !== undefined) {
+            await languages.setTextDocumentLanguage(document, language as string);
+        }
+        this._readyToDispose[document.uri.toString()] = true;
+        // End hack
+
         return this._links[document.uri.toString()];
     }
 
