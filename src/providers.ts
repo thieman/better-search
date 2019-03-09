@@ -26,6 +26,7 @@ export class BetterSearchProvider implements TextDocumentContentProvider, Docume
     _languages: {[docUri: string]: LanguageConfiguration | undefined};
     _links: {[docUri: string]: DocumentLink[]};
     _highlights: {[docUri: string]: DocumentHighlight[]};
+    _queries: {[docUri: string]: string};
     _queryRegexes: {[docUri: string]: RegExp};
     _readyToDispose: {[docUri: string]: boolean};
     _subscriptions: Disposable;
@@ -34,6 +35,7 @@ export class BetterSearchProvider implements TextDocumentContentProvider, Docume
         this._languages = {};
         this._links = {};
         this._highlights = {};
+        this._queries = {};
         this._queryRegexes = {};
         this._readyToDispose = {};
 
@@ -42,6 +44,7 @@ export class BetterSearchProvider implements TextDocumentContentProvider, Docume
                 delete this._languages[doc.uri.toString()];
                 this._links[doc.uri.toString()] = [];
                 this._highlights[doc.uri.toString()] = [];
+                delete this._queries[doc.uri.toString()];
                 for (let key in this._queryRegexes) {
                     delete this._queryRegexes[key];
                 }
@@ -58,18 +61,21 @@ export class BetterSearchProvider implements TextDocumentContentProvider, Docume
         return 'BetterSearch';
     }
 
-    private async detectLanguage(results: (search.SearchResult | search.ResultSeparator)[]): Promise<LanguageConfiguration | undefined> {
-        const files: {[filePath: string]: boolean} = {};
+    private uniqueFiles(results: (search.SearchResult | search.ResultSeparator)[]): { [filePath: string]: null } {
+        const files: {[filePath: string]: null} = {};
         for (let resultUnion of results) {
             if (search.isResultSeparator(resultUnion)) {
                 continue;
             }
             const r = resultUnion as search.SearchResult;
-            files[r.filePath] = true;
+            files[r.filePath] = null;
         }
+        return files;
+    }
 
+    private async detectLanguage(results: (search.SearchResult | search.ResultSeparator)[]): Promise<LanguageConfiguration | undefined> {
         const extensions: {[extension: string]: number} = {};
-        for (let filePath in files) {
+        for (let filePath in this.uniqueFiles(results)) {
             let parts = filePath.split('.');
             const extension = parts[parts.length - 1];
             extensions[extension] = extensions[extension] === undefined ? 1 : extensions[extension] + 1;
@@ -97,7 +103,27 @@ export class BetterSearchProvider implements TextDocumentContentProvider, Docume
         return '--';
     }
 
-    private renderHeader(docUriString: string, state: RenderState, result: search.SearchResult): string {
+    private renderDocumentHeader(docUriString: string, state: RenderState, results: (search.SearchResult | search.ResultSeparator)[]): string {
+        const files = this.uniqueFiles(results);
+        let hits = 0;
+        for (let r of results) {
+            if (!search.isResultSeparator(r)) {
+                const result = r as search.SearchResult;
+                if (!result.isContext) {
+                    hits += 1;
+                }
+            }
+        }
+
+        state.line += 4;
+
+        return `Search Query: ${this._queries[docUriString]}
+Containing Folder: ${workspace.rootPath}
+Total Results: ${hits}
+Total Files: ${Object.keys(files).length}\n`;
+    }
+
+    private renderResultHeader(docUriString: string, state: RenderState, result: search.SearchResult): string {
         const range = new Range(state.line + 1, 0, state.line + 1, result.filePath.length + 6);
         const uri = Uri.parse(`file://${workspace.rootPath}/${result.filePath}`);
         this._links[docUriString].push(new DocumentLink(range, uri));
@@ -143,6 +169,7 @@ export class BetterSearchProvider implements TextDocumentContentProvider, Docume
 
         this._links[uriString] = [];
         this._highlights[uriString] = [];
+        this._queries[uriString] = params.query as string;
         this._queryRegexes[uriString] = new RegExp(`(${params.query})`);
 
         const opts: search.SearchOptions = {
@@ -155,6 +182,8 @@ export class BetterSearchProvider implements TextDocumentContentProvider, Docume
 
         let state: RenderState = {line: 0, filePath: ''};
 
+        const documentHeader = this.renderDocumentHeader(uriString, state, results);
+
         const rawResults = results.map(function(this: BetterSearchProvider, resultUnion: (search.SearchResult | search.ResultSeparator)): string {
             if (search.isResultSeparator(resultUnion)) {
                 return this.renderSeparator(state);
@@ -165,7 +194,7 @@ export class BetterSearchProvider implements TextDocumentContentProvider, Docume
             const thisResult: string[] = [];
 
             if (state.filePath !== result.filePath) {
-                thisResult.push(this.renderHeader(uriString, state, result));
+                thisResult.push(this.renderResultHeader(uriString, state, result));
             }
 
             if (result.isContext) {
@@ -177,7 +206,7 @@ export class BetterSearchProvider implements TextDocumentContentProvider, Docume
             return thisResult.join('\n');
         }.bind(this));
 
-        return this.formatResults(rawResults);
+        return documentHeader + this.formatResults(rawResults);
     }
 
     async provideDocumentLinks(document: TextDocument, token: CancellationToken): Promise<DocumentLink[]> {
