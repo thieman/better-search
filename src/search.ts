@@ -68,7 +68,7 @@ export function runSearch(opts: SearchOptions): Promise<(SearchResult | ResultSe
     return new Promise<(SearchResult | ResultSeparator)[]>((resolve, reject) => {
         const execOptions = {
             cwd: vscode.workspace.rootPath,
-            maxBuffer: 1024 * 1000,
+            maxBuffer: 20 * 1024 * 1000,
         };
 
         const command = `${rgPath} ${quote(opts.query)} --color never --no-heading --column --line-number --context 2`;
