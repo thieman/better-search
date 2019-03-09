@@ -19,6 +19,13 @@
 				"command": "betterSearch.search",
 				"title": "Better Search"
 			}
+		],
+		"keybindings": [
+			{
+				"key": "enter",
+				"command": "editor.action.openLink",
+				"when": "resourceScheme == BetterSearch"
+			}
 		]
 	},
 	"scripts": {

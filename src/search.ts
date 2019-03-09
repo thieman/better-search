@@ -57,7 +57,7 @@ function parseResults(ripgrepStdout: string): (SearchResult | ResultSeparator)[]
                     isContext: true,
                 });
             }
-        }  
+        }
     }
     return results;
 }
