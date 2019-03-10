@@ -34,17 +34,26 @@
     "commands": [
       {
         "command": "betterSearch.search",
-        "title": "Better Search"
+        "title": "Better Search: Find"
       },
       {
         "command": "betterSearch.searchInFolder",
-        "title": "Better Search in Folder"
+        "title": "Better Search: Find in Folder"
+      },
+      {
+        "command": "betterSearch.reexecute",
+        "title": "Better Search: Re-execute Current Search"
       }
     ],
     "keybindings": [
       {
         "key": "enter",
         "command": "editor.action.openLink",
+        "when": "resourceScheme == BetterSearch"
+      },
+      {
+        "key": "g",
+        "command": "betterSearch.reexecute",
         "when": "resourceScheme == BetterSearch"
       }
     ],

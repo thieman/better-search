@@ -30,8 +30,14 @@ export function activate(context: vscode.ExtensionContext) {
     commands.searchInFolder
   );
 
+  const reexecuteSearchDisposable = vscode.commands.registerCommand(
+    "betterSearch.reexecute",
+    commands.reexecuteSearch
+  );
+
   context.subscriptions.push(providerRegistrations, searchDisposable);
   context.subscriptions.push(providerRegistrations, searchInFolderDisposable);
+  context.subscriptions.push(providerRegistrations, reexecuteSearchDisposable);
 }
 
 export function deactivate() {}
