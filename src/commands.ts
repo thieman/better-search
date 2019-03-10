@@ -16,8 +16,8 @@ function buildUri(searchOptions: SearchOptions): vscode.Uri {
   );
 }
 
-export function searchInFolder(context: any): Promise<void> {
-  if (context["fsPath"] !== undefined) {
+export function searchInFolder(context?: any): Promise<void> {
+  if (context !== undefined && context["fsPath"] !== undefined) {
     return search({ location: context["fsPath"] });
   }
   return search({});
