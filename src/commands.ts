@@ -1,13 +1,15 @@
 import * as vscode from 'vscode';
 import { getWordAtPoint } from './editor';
 import { BetterSearchProvider } from './providers';
+import { SearchOptions } from './search';
 
 function sluggify(inputString: string): string {
     return inputString.replace(/[^a-z0-9]/gi, '_');
 }
 
-function buildUri(query: string): vscode.Uri {
-    return vscode.Uri.parse(`${BetterSearchProvider.scheme}:${sluggify(query)}.better?query=${query}`);
+function buildUri(searchOptions: SearchOptions): vscode.Uri {
+    const { query, location } = searchOptions;
+    return vscode.Uri.parse(`${BetterSearchProvider.scheme}:${sluggify(query)}.better?query=${query}&location=${location}`);
 }
 
 export function search(): void {
@@ -18,7 +20,7 @@ export function search(): void {
 
     const defaultSearch = getWordAtPoint(editor);
 
-    // Folder / location handling?
+    const location = vscode.workspace.rootPath || '/';
 
     vscode.window.showInputBox({
         value: defaultSearch,
@@ -29,7 +31,10 @@ export function search(): void {
     }).then((query: string | undefined): void => {
         if (query === undefined) { return; }
 
-        const uri = buildUri(query);
+        const uri = buildUri({
+            query,
+            location,
+        });
         vscode.workspace.openTextDocument(uri).then(doc =>
             vscode.window.showTextDocument(doc, {
                 preview: false,

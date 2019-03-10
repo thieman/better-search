@@ -1,4 +1,3 @@
-import * as vscode from 'vscode';
 import { rgPath } from 'vscode-ripgrep';
 import * as child from 'child_process';
 
@@ -7,6 +6,7 @@ const ContextRegex = /(.+?)-(\d+)-(.*)/;
 
 export interface SearchOptions {
     query: string;
+    location: string;
     // TODO: sortFiles bool
     // TODO: context number
 }
@@ -67,7 +67,7 @@ function parseResults(ripgrepStdout: string): (SearchResult | ResultSeparator)[]
 export function runSearch(opts: SearchOptions): Promise<(SearchResult | ResultSeparator)[]> {
     return new Promise<(SearchResult | ResultSeparator)[]>((resolve, reject) => {
         const execOptions = {
-            cwd: vscode.workspace.rootPath,
+            cwd: opts.location,
             maxBuffer: 20 * 1024 * 1000,
         };
 

@@ -20,6 +20,7 @@ const LANGUAGE_EXTENSIONS: {[lang: string]: string} = {
 interface RenderState {
     line: number;
     filePath: string;
+    readonly searchOptions: search.SearchOptions;
 }
 
 export class BetterSearchProvider implements TextDocumentContentProvider, DocumentLinkProvider, DocumentHighlightProvider {
@@ -118,14 +119,14 @@ export class BetterSearchProvider implements TextDocumentContentProvider, Docume
         state.line += 4;
 
         return `Search Query: ${this._queries[docUriString]}
-Containing Folder: ${workspace.rootPath}
+Containing Folder: ${state.searchOptions.location}
 Total Results: ${hits}
 Total Files: ${Object.keys(files).length}\n`;
     }
 
     private renderResultHeader(docUriString: string, state: RenderState, result: search.SearchResult): string {
         const range = new Range(state.line + 1, 0, state.line + 1, result.filePath.length + 6);
-        const uri = Uri.parse(`file://${workspace.rootPath}/${result.filePath}`);
+        const uri = Uri.parse(`file://${state.searchOptions.location}/${result.filePath}`);
         this._links[docUriString].push(new DocumentLink(range, uri));
 
         state.line += 2;
@@ -135,7 +136,7 @@ Total Files: ${Object.keys(files).length}\n`;
 
     private renderContext(docUriString: string, state: RenderState, result: search.SearchResult): string {
         const range = new Range(state.line, 0, state.line, result.line.toString().length);
-        const uri = Uri.parse(`file://${workspace.rootPath}/${result.filePath}#L${result.line}`);
+        const uri = Uri.parse(`file://${state.searchOptions.location}/${result.filePath}#L${result.line}`);
         this._links[docUriString].push(new DocumentLink(range, uri));
 
         state.line++;
@@ -144,7 +145,7 @@ Total Files: ${Object.keys(files).length}\n`;
 
     private renderMatch(docUriString: string, state: RenderState, result: search.SearchResult): string {
         const linkRange = new Range(state.line, 0, state.line, result.line.toString().length);
-        const uri = Uri.parse(`file://${workspace.rootPath}/${result.filePath}#L${result.line}`);
+        const uri = Uri.parse(`file://${state.searchOptions.location}/${result.filePath}#L${result.line}`);
         this._links[docUriString].push(new DocumentLink(linkRange, uri));
 
         // BUG: Only highlights the first match. Too frustrated with JS regexes to fix right now
@@ -164,7 +165,7 @@ Total Files: ${Object.keys(files).length}\n`;
     }
 
     async provideTextDocumentContent(uri: Uri, token: CancellationToken): Promise<string> {
-        const params = querystring.parse(uri.query);
+        const params = querystring.parse(uri.query) as unknown as search.SearchOptions;
         const uriString = uri.toString();
 
         this._links[uriString] = [];
@@ -173,14 +174,15 @@ Total Files: ${Object.keys(files).length}\n`;
         this._queryRegexes[uriString] = new RegExp(`(${params.query})`);
 
         const opts: search.SearchOptions = {
-            query: params.query as string,
+            query: params.query,
+            location: params.location,
         };
 
         const results = await search.runSearch(opts);
         const language = await this.detectLanguage(results);
         this._languages[uriString] = language;
 
-        let state: RenderState = {line: 0, filePath: ''};
+        let state: RenderState = {line: 0, filePath: '', searchOptions: opts};
 
         const documentHeader = this.renderDocumentHeader(uriString, state, results);
 
