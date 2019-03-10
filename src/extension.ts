@@ -20,12 +20,18 @@ export function activate(context: vscode.ExtensionContext) {
     )
   );
 
-  let disposable = vscode.commands.registerCommand(
+  const searchDisposable = vscode.commands.registerCommand(
     "betterSearch.search",
     commands.search
   );
 
-  context.subscriptions.push(providerRegistrations, disposable);
+  const searchInFolderDisposable = vscode.commands.registerCommand(
+    "betterSearch.searchInFolder",
+    commands.searchInFolder
+  );
+
+  context.subscriptions.push(providerRegistrations, searchDisposable);
+  context.subscriptions.push(providerRegistrations, searchInFolderDisposable);
 }
 
 export function deactivate() {}

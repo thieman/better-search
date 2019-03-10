@@ -16,7 +16,16 @@ function buildUri(searchOptions: SearchOptions): vscode.Uri {
   );
 }
 
-export async function search(): Promise<void> {
+export function searchInFolder(context: any): Promise<void> {
+  if (context["fsPath"] !== undefined) {
+    return search({ location: context["fsPath"] });
+  }
+  return search({});
+}
+
+export async function search(
+  partialOpts: Partial<SearchOptions> = {}
+): Promise<void> {
   const editor = vscode.window.activeTextEditor;
   if (!editor) {
     return;
@@ -24,28 +33,32 @@ export async function search(): Promise<void> {
 
   const defaultSearch = getWordAtPoint(editor);
 
-  const location = vscode.workspace.rootPath || "/";
-  const context = 0;
-  const sortFiles = false;
-
-  const query = await vscode.window.showInputBox({
-    value: defaultSearch,
-    valueSelection: [0, (defaultSearch || "").length],
-    password: false,
-    prompt: "Search",
-    placeHolder: "Search term"
-  });
+  let query = partialOpts.query;
+  if (query === undefined) {
+    query = await vscode.window.showInputBox({
+      value: defaultSearch,
+      valueSelection: [0, (defaultSearch || "").length],
+      password: false,
+      prompt: "Search",
+      placeHolder: "Search term"
+    });
+  }
 
   if (query === undefined) {
     return;
   }
 
-  const uri = buildUri({
-    query,
-    location,
-    context,
-    sortFiles: sortFiles.toString()
-  });
+  let opts: SearchOptions = Object.assign(
+    {
+      query: query,
+      location: vscode.workspace.rootPath || "/",
+      context: 0,
+      sortFiles: "false"
+    },
+    partialOpts
+  );
+
+  const uri = buildUri(opts);
 
   const doc = await vscode.workspace.openTextDocument(uri);
   vscode.window.showTextDocument(doc, {
