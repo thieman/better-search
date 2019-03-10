@@ -2,7 +2,7 @@
 
 This extension adds a new search functionality that presents your results in a full window. This approach is borrowed from Sublime Text, many Emacs modes, and various other common editors.
 
-![add a pic]()
+![Better Search Example](/media/search.png)
 
 ## Features
 
