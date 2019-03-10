@@ -8,7 +8,7 @@ export interface SearchOptions {
   query: string;
   location: string;
   context: number;
-  // TODO: sortFiles bool
+  sortFiles: string;
 }
 
 export interface SearchResult {
@@ -79,11 +79,17 @@ export function runSearch(
       maxBuffer: 20 * 1024 * 1000
     };
 
-    const command = `${rgPath} ${quote(
+    let command = `${rgPath} ${quote(
       opts.query
     )} --color never --no-heading --column --line-number --context ${
       opts.context
     }`;
+
+    if (opts.sortFiles === "true") {
+      command += " --sort-files";
+    }
+
+    console.log(command);
 
     child.exec(
       command,

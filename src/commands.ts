@@ -8,11 +8,11 @@ function sluggify(inputString: string): string {
 }
 
 function buildUri(searchOptions: SearchOptions): vscode.Uri {
-  const { query, location, context } = searchOptions;
+  const { query, location, context, sortFiles } = searchOptions;
   return vscode.Uri.parse(
     `${BetterSearchProvider.scheme}:${sluggify(
       query
-    )}.better?query=${query}&location=${location}&context=${context}`
+    )}.better?query=${query}&location=${location}&context=${context}&sortFiles=${sortFiles}`
   );
 }
 
@@ -26,6 +26,7 @@ export async function search(): Promise<void> {
 
   const location = vscode.workspace.rootPath || "/";
   const context = 0;
+  const sortFiles = false;
 
   const query = await vscode.window.showInputBox({
     value: defaultSearch,
@@ -42,7 +43,8 @@ export async function search(): Promise<void> {
   const uri = buildUri({
     query,
     location,
-    context
+    context,
+    sortFiles: sortFiles.toString()
   });
 
   const doc = await vscode.workspace.openTextDocument(uri);
