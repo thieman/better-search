@@ -96,7 +96,9 @@ export function runSearch(
       execOptions,
       (err: Error | null, stdout: string, stderr: string): void => {
         if (err !== null) {
-          reject(err);
+          // ripgrep returns a non-zero exit code if no results are
+          // found. Not sure if there's a way to get better signal.
+          resolve([]);
         }
         try {
           resolve(parseResults(stdout));
