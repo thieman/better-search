@@ -1,47 +1,57 @@
-import * as vscode from 'vscode';
-import { getWordAtPoint } from './editor';
-import { BetterSearchProvider } from './providers';
-import { SearchOptions } from './search';
+import * as vscode from "vscode";
+import { getWordAtPoint } from "./editor";
+import { BetterSearchProvider } from "./providers";
+import { SearchOptions } from "./search";
 
 function sluggify(inputString: string): string {
-    return inputString.replace(/[^a-z0-9]/gi, '_');
+  return inputString.replace(/[^a-z0-9]/gi, "_");
 }
 
 function buildUri(searchOptions: SearchOptions): vscode.Uri {
-    const { query, location, context } = searchOptions;
-    return vscode.Uri.parse(`${BetterSearchProvider.scheme}:${sluggify(query)}.better?query=${query}&location=${location}&context=${context}`);
+  const { query, location, context } = searchOptions;
+  return vscode.Uri.parse(
+    `${BetterSearchProvider.scheme}:${sluggify(
+      query
+    )}.better?query=${query}&location=${location}&context=${context}`
+  );
 }
 
 export function search(): void {
-    const editor = vscode.window.activeTextEditor;
-    if (!editor) {
-        return;
-    }
+  const editor = vscode.window.activeTextEditor;
+  if (!editor) {
+    return;
+  }
 
-    const defaultSearch = getWordAtPoint(editor);
+  const defaultSearch = getWordAtPoint(editor);
 
-    const location = vscode.workspace.rootPath || '/';
-    const context = 0;
+  const location = vscode.workspace.rootPath || "/";
+  const context = 0;
 
-    vscode.window.showInputBox({
-        value: defaultSearch,
-        valueSelection: [0, (defaultSearch || '').length],
-        password: false,
-        prompt: "Search",
-        placeHolder: "Search term",
-    }).then((query: string | undefined): void => {
-        if (query === undefined) { return; }
+  vscode.window
+    .showInputBox({
+      value: defaultSearch,
+      valueSelection: [0, (defaultSearch || "").length],
+      password: false,
+      prompt: "Search",
+      placeHolder: "Search term"
+    })
+    .then(
+      (query: string | undefined): void => {
+        if (query === undefined) {
+          return;
+        }
 
         const uri = buildUri({
-            query,
-            location,
-            context,
+          query,
+          location,
+          context
         });
         vscode.workspace.openTextDocument(uri).then(doc =>
-            vscode.window.showTextDocument(doc, {
-                preview: false,
-                viewColumn: 1
-            })
+          vscode.window.showTextDocument(doc, {
+            preview: false,
+            viewColumn: 1
+          })
         );
-    });
+      }
+    );
 }
