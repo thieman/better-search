@@ -128,7 +128,7 @@ export class BetterSearchProvider
 
   private renderSeparator(state: RenderState): string {
     state.line++;
-    return "--";
+    return "- - - - - - - - - - - - - - - - - - - - - - - - - - -";
   }
 
   private renderDocumentHeader(
@@ -261,18 +261,25 @@ Total Files: ${Object.keys(files).length}\n`;
 
     const documentHeader = this.renderDocumentHeader(uriString, state, results);
 
+    let addSeparatorOnNext = false;
     const rawResults = results.map(
       function(
         this: BetterSearchProvider,
         resultUnion: search.SearchResult | search.ResultSeparator
-      ): string {
+      ): string | null {
         if (search.isResultSeparator(resultUnion)) {
-          return this.renderSeparator(state);
+          addSeparatorOnNext = true;
+          return null;
         }
 
         // Compiler is freaking out if I try to do this in an else, not sure why
         let result = resultUnion as search.SearchResult;
         const thisResult: string[] = [];
+
+        if (addSeparatorOnNext && result.filePath === state.filePath) {
+          thisResult.push(this.renderSeparator(state));
+        }
+        addSeparatorOnNext = false;
 
         if (state.filePath !== result.filePath) {
           thisResult.push(this.renderResultHeader(uriString, state, result));
@@ -288,7 +295,10 @@ Total Files: ${Object.keys(files).length}\n`;
       }.bind(this)
     );
 
-    return documentHeader + this.formatResults(rawResults);
+    return (
+      documentHeader +
+      this.formatResults(rawResults.filter(elem => elem !== null) as string[])
+    );
   }
 
   async provideDocumentLinks(

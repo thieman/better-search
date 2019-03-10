@@ -38,6 +38,7 @@ function parseResults(
   ripgrepStdout: string
 ): (SearchResult | ResultSeparator)[] {
   const results: (SearchResult | ResultSeparator)[] = [];
+
   for (let line of ripgrepStdout.split("\n")) {
     if (line === "--") {
       results.push(RESULT_SEPARATOR);
@@ -66,7 +67,6 @@ function parseResults(
     }
   }
 
-  results.pop(); // removes extraneous separator
   return results;
 }
 
