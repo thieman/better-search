@@ -1,65 +1,28 @@
-# better-search README
+# Better Search
 
-This is the README for your extension "better-search". After writing up a brief description, we recommend including the following sections.
+This extension adds a new search functionality that presents your results in a full window. This approach is borrowed from Sublime Text, many Emacs modes, and various other common editors.
+
+![add a pic]()
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+* Displays search results in an editor window, rather than the sidebar
+* Results link to the matching file at the correct line
+* Shows context lines around the line matching your query
+* Syntax highlighting based on the most common file type found in your search results
+* Integrates with File Explorer so you can easily search in specific folders
 
-For example if there is an image subfolder under your extension project workspace:
+## How to Use
 
-\!\[feature X\]\(images/feature-x.png\)
+Once you've installed the extension, you can take it for a spin:
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+1. Type `C-x g` or run `betterSearch.search` to start a search with default options
+2. In the search buffer, type `enter` on one of the links (file name or column number) to go to a file
+3. To re-run the current search, type `g` or run `betterSearch.reexecute`
 
-## Requirements
+There's also `betterSearch.searchFull` if you'd like to run a search with more control over the execution options.
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+## Configuration
 
-## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: enable/disable this extension
-* `myExtension.thing`: set to `blah` to do something
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
------------------------------------------------------------------------------------------------------------
-
-## Working with Markdown
-
-**Note:** You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+CMD+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux) or `Cmd+Space` (macOS) to see a list of Markdown snippets
-
-### For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+* `betterSearch.context`: Number of context lines to show around search results. Default: 2
+* `betterSearch.sortFiles`: Sort files for deterministic sort. Enabling this limits the search to 1 thread and will negatively impact performance.
