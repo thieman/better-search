@@ -2,7 +2,27 @@
   "name": "better-search",
   "displayName": "Better Search",
   "description": "Search results with more context in their own tab",
+  "publisher": "thieman",
+  "author": {
+	  "name": "Travis Thieman",
+	  "email": "travis.thieman@gmail.com",
+	  "url": "https://github.com/thieman"
+  }
+  "bugs": {
+    "url": "https://github.com/thieman/better-search/issues",
+    "email": "travis.thieman@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thieman/better-search.git"
+  },
+  "homepage": "https://github.com/thieman/better-search",
+  "license": "MIT",
   "version": "0.0.1",
+  "keywords": [
+    "search",
+    "sublime"
+  ],
   "engines": {
     "vscode": "^1.30.0"
   },
