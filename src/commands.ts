@@ -16,7 +16,7 @@ function buildUri(searchOptions: SearchOptions): vscode.Uri {
   );
 }
 
-export function search(): void {
+export async function search(): Promise<void> {
   const editor = vscode.window.activeTextEditor;
   if (!editor) {
     return;
@@ -27,31 +27,27 @@ export function search(): void {
   const location = vscode.workspace.rootPath || "/";
   const context = 0;
 
-  vscode.window
-    .showInputBox({
-      value: defaultSearch,
-      valueSelection: [0, (defaultSearch || "").length],
-      password: false,
-      prompt: "Search",
-      placeHolder: "Search term"
-    })
-    .then(
-      (query: string | undefined): void => {
-        if (query === undefined) {
-          return;
-        }
+  const query = await vscode.window.showInputBox({
+    value: defaultSearch,
+    valueSelection: [0, (defaultSearch || "").length],
+    password: false,
+    prompt: "Search",
+    placeHolder: "Search term"
+  });
 
-        const uri = buildUri({
-          query,
-          location,
-          context
-        });
-        vscode.workspace.openTextDocument(uri).then(doc =>
-          vscode.window.showTextDocument(doc, {
-            preview: false,
-            viewColumn: 1
-          })
-        );
-      }
-    );
+  if (query === undefined) {
+    return;
+  }
+
+  const uri = buildUri({
+    query,
+    location,
+    context
+  });
+
+  const doc = await vscode.workspace.openTextDocument(uri);
+  vscode.window.showTextDocument(doc, {
+    preview: false,
+    viewColumn: 1
+  });
 }
