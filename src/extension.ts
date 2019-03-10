@@ -25,6 +25,11 @@ export function activate(context: vscode.ExtensionContext) {
     commands.search
   );
 
+  const searchFullDisposable = vscode.commands.registerCommand(
+    "betterSearch.searchFull",
+    commands.searchFull
+  );
+
   const searchInFolderDisposable = vscode.commands.registerCommand(
     "betterSearch.searchInFolder",
     commands.searchInFolder
@@ -36,6 +41,7 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(providerRegistrations, searchDisposable);
+  context.subscriptions.push(providerRegistrations, searchFullDisposable);
   context.subscriptions.push(providerRegistrations, searchInFolderDisposable);
   context.subscriptions.push(providerRegistrations, reexecuteSearchDisposable);
 }

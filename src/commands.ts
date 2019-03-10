@@ -24,6 +24,23 @@ function optionsFromUri(docUriString: string): SearchOptions {
   return (parsed.query as unknown) as SearchOptions;
 }
 
+async function promptForQuery(): Promise<string | undefined> {
+  const editor = vscode.window.activeTextEditor;
+  if (!editor) {
+    return;
+  }
+
+  const defaultSearch = getWordAtPoint(editor);
+
+  return await vscode.window.showInputBox({
+    value: defaultSearch,
+    valueSelection: [0, (defaultSearch || "").length],
+    password: false,
+    prompt: "Search",
+    placeHolder: "Search term"
+  });
+}
+
 export async function reexecuteSearch(): Promise<void> {
   const editor = vscode.window.activeTextEditor;
   if (editor !== undefined) {
@@ -48,25 +65,37 @@ export function searchInFolder(context?: any): Promise<void> {
   return search({});
 }
 
+export async function searchFull(): Promise<void> {
+  const query = await promptForQuery();
+  const location = await vscode.window.showInputBox({
+    value: vscode.workspace.rootPath,
+    valueSelection: [0, (vscode.workspace.rootPath || "").length],
+    password: false,
+    prompt: "Search Location"
+  });
+  const context = await vscode.window.showInputBox({
+    password: false,
+    prompt: "Lines of Context",
+    placeHolder: "Leave blank for default"
+  });
+
+  let opts: Partial<SearchOptions> = { query };
+  if (location) {
+    opts.location = location;
+  }
+  if (context) {
+    opts.context = parseInt(context);
+  }
+
+  return await search(opts);
+}
+
 export async function search(
   partialOpts: Partial<SearchOptions> = {}
 ): Promise<void> {
-  const editor = vscode.window.activeTextEditor;
-  if (!editor) {
-    return;
-  }
-
-  const defaultSearch = getWordAtPoint(editor);
-
   let query = partialOpts.query;
   if (query === undefined) {
-    query = await vscode.window.showInputBox({
-      value: defaultSearch,
-      valueSelection: [0, (defaultSearch || "").length],
-      password: false,
-      prompt: "Search",
-      placeHolder: "Search term"
-    });
+    query = await promptForQuery();
   }
 
   if (query === undefined) {
