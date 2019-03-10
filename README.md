@@ -6,11 +6,11 @@ This extension adds a new search functionality that presents your results in a f
 
 ## Features
 
-* Displays search results in an editor window, rather than the sidebar
-* Results link to the matching file at the correct line
-* Shows context lines around the line matching your query
-* Syntax highlighting based on the most common file type found in your search results
-* Integrates with File Explorer so you can easily search in specific folders
+- Displays search results in an editor window, rather than the sidebar
+- Results link to the matching file at the correct line
+- Shows context lines around the line matching your query
+- Syntax highlighting based on the most common file type found in your search results
+- Integrates with File Explorer so you can easily search in specific folders
 
 ## How to Use
 
@@ -24,5 +24,9 @@ There's also `betterSearch.searchFull` if you'd like to run a search with more c
 
 ## Configuration
 
-* `betterSearch.context`: Number of context lines to show around search results. Default: 2
-* `betterSearch.sortFiles`: Sort files for deterministic sort. Enabling this limits the search to 1 thread and will negatively impact performance.
+- `betterSearch.context`: Number of context lines to show around search results. Default: 2
+- `betterSearch.sortFiles`: Sort files for deterministic sort. Enabling this limits the search to 1 thread and will negatively impact performance.
+
+## Attributions
+
+Magnifying glass icon courtesy of [icon lauk](https://www.iconfinder.com/andhikairfani)
