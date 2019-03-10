@@ -10,9 +10,9 @@ function sluggify(inputString: string): string {
 function buildUri(searchOptions: SearchOptions): vscode.Uri {
   const { query, location, context, sortFiles } = searchOptions;
   return vscode.Uri.parse(
-    `${BetterSearchProvider.scheme}:${sluggify(
+    `${BetterSearchProvider.scheme}:Σ: ${sluggify(
       query
-    )}.better?query=${query}&location=${location}&context=${context}&sortFiles=${sortFiles}`
+    )}?query=${query}&location=${location}&context=${context}&sortFiles=${sortFiles}`
   );
 }
 
