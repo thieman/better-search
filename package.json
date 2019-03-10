@@ -15,6 +15,22 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
+    "configuration": {
+      "type": "object",
+      "title": "Better Search configuration",
+      "properties": {
+        "better-search.context": {
+          "type": "number",
+          "default": 2,
+          "description": "Default number of context lines to show around matching lines"
+        },
+        "better-search.sortFiles": {
+          "type": "boolean",
+          "default": false,
+          "description": "Sort files for deterministic sort. Enabling this may negatively affect performance"
+        }
+      }
+    },
     "commands": [
       {
         "command": "betterSearch.search",
