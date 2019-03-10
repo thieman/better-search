@@ -8,8 +8,8 @@ function sluggify(inputString: string): string {
 }
 
 function buildUri(searchOptions: SearchOptions): vscode.Uri {
-    const { query, location } = searchOptions;
-    return vscode.Uri.parse(`${BetterSearchProvider.scheme}:${sluggify(query)}.better?query=${query}&location=${location}`);
+    const { query, location, context } = searchOptions;
+    return vscode.Uri.parse(`${BetterSearchProvider.scheme}:${sluggify(query)}.better?query=${query}&location=${location}&context=${context}`);
 }
 
 export function search(): void {
@@ -21,6 +21,7 @@ export function search(): void {
     const defaultSearch = getWordAtPoint(editor);
 
     const location = vscode.workspace.rootPath || '/';
+    const context = 0;
 
     vscode.window.showInputBox({
         value: defaultSearch,
@@ -34,6 +35,7 @@ export function search(): void {
         const uri = buildUri({
             query,
             location,
+            context,
         });
         vscode.workspace.openTextDocument(uri).then(doc =>
             vscode.window.showTextDocument(doc, {

@@ -165,18 +165,13 @@ Total Files: ${Object.keys(files).length}\n`;
     }
 
     async provideTextDocumentContent(uri: Uri, token: CancellationToken): Promise<string> {
-        const params = querystring.parse(uri.query) as unknown as search.SearchOptions;
+        const opts = querystring.parse(uri.query) as unknown as search.SearchOptions;
         const uriString = uri.toString();
 
         this._links[uriString] = [];
         this._highlights[uriString] = [];
-        this._queries[uriString] = params.query as string;
-        this._queryRegexes[uriString] = new RegExp(`(${params.query})`);
-
-        const opts: search.SearchOptions = {
-            query: params.query,
-            location: params.location,
-        };
+        this._queries[uriString] = opts.query as string;
+        this._queryRegexes[uriString] = new RegExp(`(${opts.query})`);
 
         const results = await search.runSearch(opts);
         const language = await this.detectLanguage(results);

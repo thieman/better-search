@@ -7,6 +7,7 @@ const ContextRegex = /(.+?)-(\d+)-(.*)/;
 export interface SearchOptions {
     query: string;
     location: string;
+    context: number;
     // TODO: sortFiles bool
     // TODO: context number
 }
@@ -71,7 +72,7 @@ export function runSearch(opts: SearchOptions): Promise<(SearchResult | ResultSe
             maxBuffer: 20 * 1024 * 1000,
         };
 
-        const command = `${rgPath} ${quote(opts.query)} --color never --no-heading --column --line-number --context 2`;
+        const command = `${rgPath} ${quote(opts.query)} --color never --no-heading --column --line-number --context ${opts.context}`;
 
         child.exec(command, execOptions, (err: Error | null, stdout: string, stderr: string): void => {
             if (err !== null) { reject(err); }
