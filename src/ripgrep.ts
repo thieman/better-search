@@ -76,15 +76,19 @@ async function runVscodeRipgrepInstaller(): Promise<null> {
   return await download(opts);
 }
 
-export async function getRipgrepExecutablePath(): Promise<string> {
-  const rg = require(path.join(
-    context.globalStoragePath,
-    "vscode-ripgrep",
-    "package",
-    "lib",
-    "index.js"
-  ));
-  return rg.rgPath;
+export async function getRipgrepExecutablePath(): Promise<string | null> {
+  try {
+    const rg = require(path.join(
+      context.globalStoragePath,
+      "vscode-ripgrep",
+      "package",
+      "lib",
+      "index.js"
+    ));
+    return rg.rgPath;
+  } catch (error) {
+    return null;
+  }
 }
 
 export async function ensureRipgrepInstalled(): Promise<void> {
