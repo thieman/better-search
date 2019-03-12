@@ -1,4 +1,5 @@
 import * as fs from "fs";
+import * as stream from "stream";
 import * as path from "path";
 import * as os from "os";
 import * as request from "request";
@@ -38,9 +39,14 @@ async function downloadVscodeRipgrep(): Promise<void> {
     });
   }
 
-  await request(TARBALL_URL)
+  const stream: stream.Readable = request(TARBALL_URL)
     .pipe(gunzip())
     .pipe(tar.extract(destination));
+
+  return new Promise((resolve, reject) => {
+    stream.on("finish", () => resolve());
+    stream.on("error", err => reject(err));
+  });
 }
 
 async function runVscodeRipgrepInstaller(): Promise<null> {
