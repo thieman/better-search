@@ -25,7 +25,7 @@
     "sublime"
   ],
   "engines": {
-    "vscode": "^1.30.0"
+    "vscode": "^1.31.0"
   },
   "categories": [
     "Other"
@@ -113,6 +113,15 @@
     "vscode": "^1.1.25"
   },
   "dependencies": {
-    "vscode-ripgrep": "^1.2.5"
+    "@types/request": "^2.48.1",
+    "@types/tar-fs": "^1.16.1",
+    "github-releases": "^0.4.1",
+    "gunzip-maybe": "^1.4.1",
+    "progress": "^2.0.0",
+    "request": "^2.88.0",
+    "rimraf": "^2.6.1",
+    "tar-fs": "^2.0.0",
+    "vscode-ripgrep": "^1.2.5",
+    "yauzl": "^2.8.0"
   }
 }

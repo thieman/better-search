@@ -1,8 +1,16 @@
 import * as vscode from "vscode";
 import * as commands from "./commands";
 import { BetterSearchProvider } from "./providers";
+import { ensureRipgrepInstalled } from "./ripgrep";
 
-export function activate(context: vscode.ExtensionContext) {
+export let context: vscode.ExtensionContext;
+
+export async function activate(
+  providedContext: vscode.ExtensionContext
+): Promise<void> {
+  context = providedContext;
+  await ensureRipgrepInstalled();
+
   const provider = new BetterSearchProvider();
 
   const providerRegistrations = vscode.Disposable.from(
