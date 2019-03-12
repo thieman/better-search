@@ -1,5 +1,11 @@
-import { rgPath } from "vscode-ripgrep";
 import * as child from "child_process";
+
+let rg: any;
+let ripgrepInstalled = false;
+try {
+  rg = require("vscode-ripgrep");
+  ripgrepInstalled = true;
+} catch {}
 
 const MatchRegex = /(.+?):(\d+):(\d+):(.*)/;
 const ContextRegex = /(.+?)-(\d+)-(.*)/;
@@ -70,27 +76,54 @@ function parseResults(
   return results;
 }
 
-export function runSearch(
+async function installRipgrep(): Promise<void> {
+  console.log("Installing ripgrep");
+  return new Promise((resolve, reject) => {
+    child.exec(
+      "npm install vscode-ripgrep",
+      (err: Error | null, stdout: string, stderr: string): void => {
+        if (err) {
+          return reject(err);
+        }
+        console.log(stdout);
+        resolve();
+      }
+    );
+  });
+}
+
+export async function runSearch(
   opts: SearchOptions
 ): Promise<(SearchResult | ResultSeparator)[]> {
-  return new Promise<(SearchResult | ResultSeparator)[]>((resolve, reject) => {
-    const execOptions = {
-      cwd: opts.location,
-      maxBuffer: 20 * 1024 * 1000
-    };
+  // Before the first time we execute a search, check to make sure
+  // vscode-ripgrep is installed. Can't do this as a normal
+  // dependency since this package only installs a binary for the
+  // current OS. If we did it as a normal dep, we'd ship Ubuntu
+  // binaries to everyone.
+  // https://github.com/thieman/better-search/issues/1
+  if (!ripgrepInstalled) {
+    await installRipgrep();
+    ripgrepInstalled = true;
+  }
 
-    let command = `${rgPath} ${quote(
-      opts.query
-    )} --color never --no-heading --column --line-number --context ${
-      opts.context
-    }`;
+  const execOptions = {
+    cwd: opts.location,
+    maxBuffer: 20 * 1024 * 1000
+  };
 
-    if (opts.sortFiles === "true") {
-      command += " --sort-files";
-    }
+  let command = `${rg.rgPath} ${quote(
+    opts.query
+  )} --color never --no-heading --column --line-number --context ${
+    opts.context
+  }`;
 
-    console.log(command);
+  if (opts.sortFiles === "true") {
+    command += " --sort-files";
+  }
 
+  console.log(`ripgrep command: ${command}`);
+
+  return new Promise((resolve, reject) => {
     child.exec(
       command,
       execOptions,
