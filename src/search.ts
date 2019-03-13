@@ -1,5 +1,6 @@
 import { getRipgrepExecutablePath } from "./ripgrep";
 import * as child from "child_process";
+import * as shellescape from "shell-escape";
 
 const MatchRegex = /(.+?):(\d+):(\d+):(.*)/;
 const ContextRegex = /(.+?)-(\d+)-(.*)/;
@@ -78,24 +79,31 @@ export async function runSearch(
     maxBuffer: 20 * 1024 * 1000
   };
 
-  let command = `${await getRipgrepExecutablePath()} ${quote(
-    opts.query
-  )} --color never --no-heading --column --line-number --context ${
-    opts.context
-  }`;
+  let command: string[] = [
+    await getRipgrepExecutablePath() as string,
+    quote(opts.query),
+    '--color', 
+    'never',
+    '--no-heading', 
+    '--column', 
+    '--line-number', 
+    '--context',
+    opts.context.toString(),
+  ];
 
   if (opts.sortFiles === "true") {
-    command += " --sort-files";
+    command.push("--sort-files");
   }
 
   console.log(command);
 
   return new Promise((resolve, reject) => {
     child.exec(
-      command,
+      shellescape(command),
       execOptions,
       (err: Error | null, stdout: string, stderr: string): void => {
         if (err !== null) {
+          console.log(err);
           // ripgrep returns a non-zero exit code if no results are
           // found. Not sure if there's a way to get better signal.
           resolve([]);
