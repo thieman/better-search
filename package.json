@@ -19,7 +19,7 @@
   "homepage": "https://github.com/thieman/better-search",
   "icon": "media/icon.png",
   "license": "MIT",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "keywords": [
     "search",
     "sublime"
