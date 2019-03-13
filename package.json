@@ -80,12 +80,12 @@
       {
         "key": "enter",
         "command": "editor.action.openLink",
-        "when": "resourceScheme == BetterSearch"
+        "when": "resourceScheme == BetterSearch && editorTextFocus"
       },
       {
         "key": "g",
         "command": "betterSearch.reexecute",
-        "when": "resourceScheme == BetterSearch"
+        "when": "resourceScheme == BetterSearch && editorTextFocus"
       }
     ],
     "menus": {
