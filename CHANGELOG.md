@@ -4,6 +4,10 @@ All notable changes to the "better-search" extension will be documented in this 
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.0.4] - 2019-04-13
+
+- Fixes a critical bug where the extension did not work under Windows at all
+
 ## [0.0.3] - 2019-03-12
 
 - Fixes an issue with shell escaping that could cause search to return zero results on some platforms or with some queries
