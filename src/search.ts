@@ -1,6 +1,5 @@
 import { getRipgrepExecutablePath } from "./ripgrep";
-import * as child from "child_process";
-import * as shellescape from "shell-escape";
+import * as execa from "execa";
 
 const MatchRegex = /(.+?):(\d+):(\d+):(.*)/;
 const ContextRegex = /(.+?)-(\d+)-(.*)/;
@@ -75,20 +74,19 @@ export async function runSearch(
   opts: SearchOptions
 ): Promise<(SearchResult | ResultSeparator)[]> {
   const execOptions = {
-    cwd: opts.location,
-    maxBuffer: 20 * 1024 * 1000
+    cwd: opts.location
   };
 
   let command: string[] = [
-    await getRipgrepExecutablePath() as string,
+    (await getRipgrepExecutablePath()) as string,
     quote(opts.query),
-    '--color', 
-    'never',
-    '--no-heading', 
-    '--column', 
-    '--line-number', 
-    '--context',
-    opts.context.toString(),
+    "--color",
+    "never",
+    "--no-heading",
+    "--column",
+    "--line-number",
+    "--context",
+    opts.context.toString()
   ];
 
   if (opts.sortFiles === "true") {
@@ -97,23 +95,17 @@ export async function runSearch(
 
   console.log(command);
 
-  return new Promise((resolve, reject) => {
-    child.exec(
-      shellescape(command),
-      execOptions,
-      (err: Error | null, stdout: string, stderr: string): void => {
-        if (err !== null) {
-          console.log(err);
-          // ripgrep returns a non-zero exit code if no results are
-          // found. Not sure if there's a way to get better signal.
-          resolve([]);
-        }
-        try {
-          resolve(parseResults(stdout));
-        } catch (error) {
-          reject(error);
-        }
-      }
+  try {
+    const stdout = await execa.stdout(
+      command[0],
+      command.slice(1),
+      execOptions
     );
-  });
+    return parseResults(stdout);
+  } catch (e) {
+    // ripgrep returns a non-zero exit code if no results are
+    // found. Not sure if there's a way to get better signal.
+    console.log(e);
+    return [];
+  }
 }
