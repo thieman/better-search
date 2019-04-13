@@ -1,6 +1,6 @@
 import { getRipgrepExecutablePath } from "./ripgrep";
 import * as child from "child_process";
-import * as shellescape from "shell-escape";
+import * as spawn from "cross-spawn";
 
 const MatchRegex = /(.+?):(\d+):(\d+):(.*)/;
 const ContextRegex = /(.+?)-(\d+)-(.*)/;
@@ -74,21 +74,20 @@ function parseResults(
 export async function runSearch(
   opts: SearchOptions
 ): Promise<(SearchResult | ResultSeparator)[]> {
-  const execOptions = {
-    cwd: opts.location,
-    maxBuffer: 20 * 1024 * 1000
+  const spawnOptions = {
+    cwd: opts.location
   };
 
   let command: string[] = [
-    await getRipgrepExecutablePath() as string,
+    (await getRipgrepExecutablePath()) as string,
     quote(opts.query),
-    '--color', 
-    'never',
-    '--no-heading', 
-    '--column', 
-    '--line-number', 
-    '--context',
-    opts.context.toString(),
+    "--color",
+    "never",
+    "--no-heading",
+    "--column",
+    "--line-number",
+    "--context",
+    opts.context.toString()
   ];
 
   if (opts.sortFiles === "true") {
@@ -96,6 +95,8 @@ export async function runSearch(
   }
 
   console.log(command);
+
+  const child = spawn(command[0], command.slice(1), spawnOptions);
 
   return new Promise((resolve, reject) => {
     child.exec(
