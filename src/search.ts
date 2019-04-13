@@ -26,14 +26,6 @@ export function isResultSeparator(obj: any): obj is ResultSeparator {
   return obj === RESULT_SEPARATOR;
 }
 
-function quote(str: string): string {
-  return str
-    .split('"')
-    .join('\\"')
-    .split("$")
-    .join("\\$");
-}
-
 function parseResults(
   ripgrepStdout: string
 ): (SearchResult | ResultSeparator)[] {
@@ -74,12 +66,13 @@ export async function runSearch(
   opts: SearchOptions
 ): Promise<(SearchResult | ResultSeparator)[]> {
   const execOptions = {
-    cwd: opts.location
+    cwd: opts.location,
+    stdin: 'ignore',
   };
 
   let command: string[] = [
     (await getRipgrepExecutablePath()) as string,
-    quote(opts.query),
+    opts.query,
     "--color",
     "never",
     "--no-heading",
@@ -99,7 +92,7 @@ export async function runSearch(
     const stdout = await execa.stdout(
       command[0],
       command.slice(1),
-      execOptions
+      execOptions as any,
     );
     return parseResults(stdout);
   } catch (e) {
