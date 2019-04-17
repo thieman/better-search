@@ -4,6 +4,10 @@ All notable changes to the "better-search" extension will be documented in this 
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.0.5] - 2019-04-17
+
+- Removes default keybinding of `C-x g` so that `C-x` keeps working (default Cut binding)
+
 ## [0.0.4] - 2019-04-13
 
 - Fixes a critical bug where the extension did not work under Windows at all
