@@ -73,11 +73,6 @@
     ],
     "keybindings": [
       {
-        "key": "ctrl+x g",
-        "command": "betterSearch.search",
-        "when": "editorTextFocus"
-      },
-      {
         "key": "enter",
         "command": "editor.action.openLink",
         "when": "resourceScheme == BetterSearch && editorTextFocus"
