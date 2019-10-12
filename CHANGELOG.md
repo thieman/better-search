@@ -4,7 +4,7 @@ All notable changes to the "better-search" extension will be documented in this 
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
-## [0.0.6] - Unreleased
+## [0.0.6] - 2019-10-12
 
 - **BREAKING**: Search queries were being interpreted as regexes. This broke some queries using characters like braces, parens, etc. Queries are now treated as literals by default. Regex support may be enabled on a per-query basis using the Find (All Options) command.
 - Fixes an issue where the search commands would do nothing if there was not an active editor
