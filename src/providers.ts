@@ -29,7 +29,13 @@ const LANGUAGE_EXTENSIONS: { [lang: string]: string } = {
   html: "html",
   md: "markdown",
   r: "r",
-  sql: "sql"
+  sql: "sql",
+  c: "c",
+  h: "h",
+  cpp: "cpp",
+  hpp: "cpp",
+  lua: "lua",
+  rs: "rust",
 };
 
 interface RenderState {

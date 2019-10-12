@@ -4,6 +4,11 @@ All notable changes to the "better-search" extension will be documented in this 
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.0.6] - Unreleased
+
+- Fixes an issue where the search commands would do nothing if there was not an active editor
+- Added language detection support for C, C++, Lua, and Rust
+
 ## [0.0.5] - 2019-04-17
 
 - Removes default keybinding of `C-x g` so that `C-x` keeps working (default Cut binding)
