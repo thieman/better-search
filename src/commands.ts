@@ -24,13 +24,9 @@ function optionsFromUri(docUriString: string): SearchOptions {
   return (parsed.query as unknown) as SearchOptions;
 }
 
-async function promptForQuery(): Promise<string | undefined> {
+async function promptForSearchTerm(): Promise<string | undefined> {
   const editor = vscode.window.activeTextEditor;
-  if (!editor) {
-    return;
-  }
-
-  const defaultSearch = getWordAtPoint(editor);
+  const defaultSearch = editor ? getWordAtPoint(editor) : undefined;
 
   return await vscode.window.showInputBox({
     value: defaultSearch,
@@ -58,15 +54,15 @@ export async function reexecuteSearch(): Promise<void> {
   }
 }
 
-export function searchInFolder(context?: any): Promise<void> {
+export async function searchInFolder(context?: any): Promise<void> {
   if (context !== undefined && context["fsPath"] !== undefined) {
     return search({ location: context["fsPath"] });
   }
-  return search({});
+  return search({}); 
 }
 
 export async function searchFull(): Promise<void> {
-  const query = await promptForQuery();
+  const query = await promptForSearchTerm();
   const location = await vscode.window.showInputBox({
     value: vscode.workspace.rootPath,
     valueSelection: [0, (vscode.workspace.rootPath || "").length],
@@ -95,10 +91,11 @@ export async function search(
 ): Promise<void> {
   let query = partialOpts.query;
   if (query === undefined) {
-    query = await promptForQuery();
+    query = await promptForSearchTerm();
   }
 
-  if (query === undefined) {
+  if (query === undefined || query === '') {
+    vscode.window.showErrorMessage('Better Search: Did not receive valid query, cannot perform search');  
     return;
   }
 
