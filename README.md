@@ -16,7 +16,7 @@ This extension adds a new search functionality that presents your results in a f
 
 Once you've installed the extension, you can take it for a spin:
 
-1. Run `betterSearch.search` to start a search with default options
+1. Hit Cmd + P and type to find "Better Seach: Quick Find" and hit enter to run the command
 2. In the search buffer, type `enter` on one of the links (file name or column number) to go to a file
 3. To re-run the current search, type `g` or run `betterSearch.reexecute`
 
