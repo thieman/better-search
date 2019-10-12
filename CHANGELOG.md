@@ -6,6 +6,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [0.0.6] - Unreleased
 
+- *BREAKING*: Search queries were being interpreted as regexes. This broke some queries using characters like braces, parens, etc. Queries are now treated as literals by default. Regex support may be enabled on a per-query basis using the Find (All Options) command.
 - Fixes an issue where the search commands would do nothing if there was not an active editor
 - Added language detection support for C, C++, Lua, and Rust
 

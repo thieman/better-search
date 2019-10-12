@@ -9,13 +9,14 @@ function sluggify(inputString: string): string {
 }
 
 function buildUri(searchOptions: SearchOptions): vscode.Uri {
-  const { query, location, context, sortFiles } = searchOptions;
+  const { query, queryRegex, location, context, sortFiles } = searchOptions;
   // Need a nonce so we can refresh our results without hitting cache
   const date = Date.now();
+  const queryRegexStr = queryRegex ? 'y' : 'n';
   return vscode.Uri.parse(
     `${BetterSearchProvider.scheme}:Σ: ${sluggify(
       query
-    )}?query=${query}&location=${location}&context=${context}&sortFiles=${sortFiles}&date=${date}`
+    )}?query=${query}&queryRegex=${queryRegexStr}&location=${location}&context=${context}&sortFiles=${sortFiles}&date=${date}`
   );
 }
 
@@ -63,6 +64,11 @@ export async function searchInFolder(context?: any): Promise<void> {
 
 export async function searchFull(): Promise<void> {
   const query = await promptForSearchTerm();
+  const isRegex = await vscode.window.showInputBox({
+    value: "n",
+    prompt: "Treat this query as a regular expression? (y/n)",
+  });
+
   const location = await vscode.window.showInputBox({
     value: vscode.workspace.rootPath,
     valueSelection: [0, (vscode.workspace.rootPath || "").length],
@@ -76,6 +82,8 @@ export async function searchFull(): Promise<void> {
   });
 
   let opts: Partial<SearchOptions> = { query };
+
+  opts.queryRegex = isRegex && isRegex.toLowerCase() === 'y' ? true : false;
   if (location) {
     opts.location = location;
   }
@@ -102,6 +110,7 @@ export async function search(
   let opts: SearchOptions = Object.assign(
     {
       query: query,
+      queryRegex: false,
       location: vscode.workspace.rootPath || "/",
       context: vscode.workspace.getConfiguration("betterSearch").context,
       sortFiles: vscode.workspace

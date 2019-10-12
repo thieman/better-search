@@ -6,6 +6,7 @@ const ContextRegex = /(.+?)-(\d+)-(.*)/;
 
 export interface SearchOptions {
   query: string;
+  queryRegex: boolean;
   location: string;
   context: number;
   sortFiles: string;
@@ -82,6 +83,10 @@ export async function runSearch(
     opts.context.toString()
   ];
 
+  if (!opts.queryRegex) {
+    command.push("--fixed-strings");
+  }
+
   if (opts.sortFiles === "true") {
     command.push("--sort-files");
   }
@@ -89,7 +94,7 @@ export async function runSearch(
   console.log(command);
 
   try {
-    const stdout = await execa.stdout(
+    const {stdout} = await execa(
       command[0],
       command.slice(1),
       execOptions as any,

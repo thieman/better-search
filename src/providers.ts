@@ -155,7 +155,7 @@ export class BetterSearchProvider
 
     state.line += 4;
 
-    return `Search Query: ${this._queries[docUriString]}
+    return `Search Query${state.searchOptions.queryRegex ? ' (RegEx):' : ':'} ${this._queries[docUriString]}
 Containing Folder: ${state.searchOptions.location}
 Total Results: ${hits}
 Total Files: ${Object.keys(files).length}\n`;
@@ -252,6 +252,7 @@ Total Files: ${Object.keys(files).length}\n`;
     const opts = (querystring.parse(
       uri.query
     ) as unknown) as search.SearchOptions;
+    opts.queryRegex = opts.queryRegex as any === 'y';
     const uriString = uri.toString();
 
     this._links[uriString] = [];
