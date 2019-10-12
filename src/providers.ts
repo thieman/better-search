@@ -172,8 +172,8 @@ Total Files: ${Object.keys(files).length}\n`;
       state.line + 1,
       result.filePath.length + 6
     );
-    const uri = Uri.parse(
-      `file://${state.searchOptions.location}/${result.filePath}`
+    const uri = Uri.file(
+      `${state.searchOptions.location}/${result.filePath}`
     );
     this._links[docUriString].push(new DocumentLink(range, uri));
 
@@ -193,11 +193,11 @@ Total Files: ${Object.keys(files).length}\n`;
       state.line,
       result.line.toString().length
     );
-    const uri = Uri.parse(
-      `file://${state.searchOptions.location}/${result.filePath}#L${
-        result.line
-      }`
+
+    let uri = Uri.file(
+      `${state.searchOptions.location}/${result.filePath}`
     );
+    uri = Uri.parse(`${uri.toString()}#L${result.line}`);
     this._links[docUriString].push(new DocumentLink(range, uri));
 
     state.line++;
@@ -215,11 +215,11 @@ Total Files: ${Object.keys(files).length}\n`;
       state.line,
       result.line.toString().length
     );
-    const uri = Uri.parse(
-      `file://${state.searchOptions.location}/${result.filePath}#L${
-        result.line
-      }`
+
+    let uri = Uri.file(
+      `${state.searchOptions.location}/${result.filePath}`
     );
+    uri = Uri.parse(`${uri.toString()}#L${result.line}`);
     this._links[docUriString].push(new DocumentLink(linkRange, uri));
 
     // BUG: Only highlights the first match. Too frustrated with JS regexes to fix right now
