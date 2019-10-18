@@ -22,6 +22,7 @@ import * as search from "./search";
 const LANGUAGE_EXTENSIONS: { [lang: string]: string } = {
   ts: "typescript",
   js: "javascript",
+  jsx: "javascriptreact",
   py: "python",
   java: "java",
   clj: "clojure",
@@ -36,6 +37,7 @@ const LANGUAGE_EXTENSIONS: { [lang: string]: string } = {
   hpp: "cpp",
   lua: "lua",
   rs: "rust",
+  rb: "rubyb",
 };
 
 interface RenderState {
