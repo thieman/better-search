@@ -111,7 +111,7 @@ export async function search(
     {
       query: query,
       queryRegex: false,
-      location: vscode.workspace.rootPath || "/",
+      location: partialOpts.location || vscode.workspace.rootPath || "/",
       context: vscode.workspace.getConfiguration("betterSearch").context,
       sortFiles: vscode.workspace
         .getConfiguration("betterSearch")
