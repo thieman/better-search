@@ -1,0 +1,6 @@
+{
+    // sort files to make search deterministic
+    "betterSearch.sortFiles": true,
+    // set eol to LF to make sure tests are passing across Windows and Unix
+    "files.eol": "\n"
+}
