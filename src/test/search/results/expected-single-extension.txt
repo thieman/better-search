@@ -1,0 +1,19 @@
+Search Query: foo
+Containing Folder: f:\projects\better-search\src\test\__samples__\search\js
+Total Results: 3
+Total Files: 1
+
+File: foo.js
+1   var express = require('express');
+2   
+3   var foo = express();
+4   
+5   foo.get('/', function(req, res){
+6     res.send('Hello World');
+7   });
+- - - - - - - - - - - - - - - - - - - - - - - - - - -
+9   /* istanbul ignore next */
+10   if (!module.parent) {
+11     foo.listen(3000);
+12     console.log('Express started on port 3000');
+13   }
