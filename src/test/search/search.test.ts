@@ -2,14 +2,12 @@ import { expect } from "chai";
 import * as vscode from "vscode";
 import { getSamplesLocation, read, runBetterSearch } from '../helpers';
 
-
 /**
  * NOTE: Ideally we would want to test every single command with
  * `vscode.commands.executeCommand('commandToTest')` but vscode API lacking the ability to
  * insert text to InputBox prompt, so let's test the functionality with helper function `runBetterSearch` for now.
  */
 
-// TODO add test case when no results are found
 // TODO: fix tests on unix-based systems (path separators issue)
 describe('search', () => {
 
@@ -25,6 +23,13 @@ describe('search', () => {
 		runBetterSearch({ query: '' })
 			.then(() => done('failed'))
 			.catch(() => done());
+	});
+
+	it('should work but find no results', async () => {
+		const location = getSamplesLocation('search/wrong-folder');
+		const expected = read('search/results/expected-no-results.txt');
+		const result = await runBetterSearch({ query: 'foo', location });
+		expect(result).to.equal(expected);
 	});
 
 	it('should work with multiple extensions', async () => {
