@@ -1,6 +1,6 @@
-import * as vscode from "vscode";
 import { expect } from "chai";
-import { getSamplesLocation, read, runBetterSearch, delay } from '../helpers';
+import * as vscode from "vscode";
+import { getSamplesLocation, read, runBetterSearch } from '../helpers';
 
 
 /**
@@ -9,7 +9,7 @@ import { getSamplesLocation, read, runBetterSearch, delay } from '../helpers';
  * insert text to InputBox prompt, so let's test the functionality with helper function `runBetterSearch` for now.
  */
 
-// TODO: test error cases
+// TODO add test case when no results are found
 // TODO: fix tests on unix-based systems (path separators issue)
 describe('search', () => {
 
@@ -21,11 +21,11 @@ describe('search', () => {
 		}
 	});
 
-	// it.only('should throw error if query is empty or undefined', async () => {
-	// 	const location = getSamplesLocation('search');
-	// 	const result = await runBetterSearch({ query: '', location });
-	// 	expect(result).to.throw();
-	// });
+	it('should show error if query is empty or undefined', done => {
+		runBetterSearch({ query: '' })
+			.then(() => done('failed'))
+			.catch(() => done());
+	});
 
 	it('should work with multiple extensions', async () => {
 		const location = getSamplesLocation('search');
