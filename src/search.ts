@@ -103,7 +103,6 @@ export async function runSearch(
   } catch (e) {
     // ripgrep returns a non-zero exit code if no results are
     // found. Not sure if there's a way to get better signal.
-    console.log(e);
     return [];
   }
 }
