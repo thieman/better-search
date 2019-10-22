@@ -18,7 +18,6 @@ describe('search', () => {
 		const activeEditor = vscode.window.activeTextEditor;
 		if (activeEditor) {
 			await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
-			await delay(5000);
 		}
 	});
 
