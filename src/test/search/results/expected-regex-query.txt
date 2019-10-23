@@ -1,9 +1,9 @@
 Search Query (RegEx): foo|bar|Baz
-Containing Folder: f:\projects\better-search\src\test\__samples__\search
+Containing Folder: __samples__/search
 Total Results: 38
 Total Files: 12
 
-File: cpp\bar.cpp
+File: cpp/bar.cpp
 8   int main() 
 9   { 
 10       vector<int> bar; 
@@ -28,7 +28,7 @@ File: cpp\bar.cpp
 29           cout << *ir << " "; 
 30     
 
-File: cpp\baz.cpp
+File: cpp/baz.cpp
 4   #include <bits/stdc++.h> 
 5   using namespace std; 
 6   class Baz 
@@ -41,7 +41,7 @@ File: cpp\baz.cpp
 25     
 26       // accessing data member 
 
-File: cpp\foo.cpp
+File: cpp/foo.cpp
 1   #include <stdio.h> 
 2   void foo(int x) 
 3   { 
@@ -53,7 +53,7 @@ File: cpp\foo.cpp
 11       printf("x = %d", x); 
 12       return 0; 
 
-File: js\bar.js
+File: js/bar.js
 1   var bar = ['apple', 'banana', 'grapes', 'mango', 'orange'];
 2   
 3   /**
@@ -63,7 +63,7 @@ File: js\bar.js
 12   console.log(filterItems(bar, 'ap')); // ['apple', 'grapes']
 13   console.log(filterItems(bar, 'an')); // ['banana', 'mango', 'orange']
 
-File: js\baz.js
+File: js/baz.js
 1   class Baz {
 2     constructor(x, y) {
 3       this.x = x;
@@ -75,7 +75,7 @@ File: js\baz.js
 17   
 18   console.log(Baz.distance(p1, p2));
 
-File: js\foo.js
+File: js/foo.js
 1   var express = require('express');
 2   
 3   var foo = express();
@@ -90,7 +90,7 @@ File: js\foo.js
 12     console.log('Express started on port 3000');
 13   }
 
-File: py\bar.py
+File: py/bar.py
 6   funcs = [multiply, add]
 7   for i in range(5):
 8       bar = list(map(lambda x: x(i), funcs))
@@ -98,7 +98,7 @@ File: py\bar.py
 10   
 11   # Output:
 
-File: py\baz.py
+File: py/baz.py
 1   class Baz(object):
 2       # pi is a class variable
 3       pi = 3.142
@@ -115,7 +115,7 @@ File: py\baz.py
 22   b.area()
 23   # Output: 6082.912
 
-File: py\foo.py
+File: py/foo.py
 1   for i in range(1, 101):
 2       if i % 15 == 0:
 3           foo = "FizzBuzz"
@@ -126,7 +126,7 @@ File: py\foo.py
 8       else:
 9           foo = i
 
-File: ts\bar.ts
+File: ts/bar.ts
 3   
 4   // @ts-ignore
 5   function bar(x): any {
@@ -143,7 +143,7 @@ File: ts\bar.ts
 25   // @ts-ignore
 26   alert("card: " + pickedCard2.card + " of " + pickedCard2.suit);
 
-File: ts\baz.ts
+File: ts/baz.ts
 1   // @ts-ignore
 2   class Baz {
 3       name: string;
@@ -167,7 +167,7 @@ File: ts\baz.ts
 28   
 29   sam.move();
 
-File: ts\foo.ts
+File: ts/foo.ts
 9       createCardPicker(this: Deck): () => Card;
 10   }
 11   let foo: Deck = {

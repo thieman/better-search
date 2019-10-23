@@ -1,9 +1,9 @@
 Search Query: foo
-Containing Folder: f:\projects\better-search\src\test\__samples__\search
+Containing Folder: __samples__/search
 Total Results: 11
 Total Files: 4
 
-File: cpp\foo.cpp
+File: cpp/foo.cpp
 1   #include <stdio.h> 
 2   void foo(int x) 
 3   { 
@@ -18,7 +18,7 @@ File: cpp\foo.cpp
 12       return 0; 
 13   }  
 
-File: js\foo.js
+File: js/foo.js
 1   var express = require('express');
 2   
 3   var foo = express();
@@ -33,7 +33,7 @@ File: js\foo.js
 12     console.log('Express started on port 3000');
 13   }
 
-File: py\foo.py
+File: py/foo.py
 1   for i in range(1, 101):
 2       if i % 15 == 0:
 3           foo = "FizzBuzz"
@@ -44,7 +44,7 @@ File: py\foo.py
 8       else:
 9           foo = i
 
-File: ts\foo.ts
+File: ts/foo.ts
 6   interface Deck {
 7       suits: string[];
 8       cards: number[];
