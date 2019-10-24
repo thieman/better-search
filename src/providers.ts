@@ -37,7 +37,7 @@ const LANGUAGE_EXTENSIONS: { [lang: string]: string } = {
   hpp: "cpp",
   lua: "lua",
   rs: "rust",
-  rb: "rubyb",
+  rb: "ruby",
 };
 
 interface RenderState {
