@@ -4,6 +4,10 @@ All notable changes to the "better-search" extension will be documented in this 
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.0.7] - Unreleased
+
+- Added language detection support for Ruby and JSX (@msaspence)
+
 ## [0.0.6] - 2019-10-12
 
 - **BREAKING**: Search queries were being interpreted as regexes. This broke some queries using characters like braces, parens, etc. Queries are now treated as literals by default. Regex support may be enabled on a per-query basis using the Find (All Options) command.
