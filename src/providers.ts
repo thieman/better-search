@@ -222,19 +222,27 @@ Total Files: ${Object.keys(files).length}\n`;
     uri = Uri.parse(`${uri.toString()}#L${result.line}`);
     this._links[docUriString].push(new DocumentLink(linkRange, uri));
 
-    // BUG: Only highlights the first match. Too frustrated with JS regexes to fix right now
-    const regexMatch = result.content.match(this._queryRegexes[docUriString]);
-    if (regexMatch !== null) {
+    const regexp = this._queryRegexes[docUriString];
+    const matches = result.content.match(regexp);
+    if (matches !== null) {
       const padding = result.line.toString().length + 3;
-      const highlightRange = new Range(
-        state.line,
-        padding + regexMatch.index!,
-        state.line,
-        padding + regexMatch.index! + regexMatch[0].length
-      );
-      this._highlights[docUriString].push(
-        new DocumentHighlight(highlightRange, DocumentHighlightKind.Read)
-      );
+
+      // run through each match and update position to add 
+      // hightlight for all matches
+      let index: number = 0;
+      matches.forEach(match => {
+        const position = index === 0 ? index : index + match.length;
+        index = result.content.indexOf(match, position);
+        const highlightRange = new Range(
+          state.line,
+          padding + index,
+          state.line,
+          padding + index + match.length
+        );
+        this._highlights[docUriString].push(
+          new DocumentHighlight(highlightRange, DocumentHighlightKind.Read)
+        );
+      });
     }
 
     state.line++;
@@ -258,7 +266,7 @@ Total Files: ${Object.keys(files).length}\n`;
     this._links[uriString] = [];
     this._highlights[uriString] = [];
     this._queries[uriString] = opts.query as string;
-    this._queryRegexes[uriString] = new RegExp(`(${opts.query})`);
+    this._queryRegexes[uriString] = new RegExp(`(${opts.query})`, 'g');
 
     const results = await search.runSearch(opts);
     const language = await this.detectLanguage(results);
