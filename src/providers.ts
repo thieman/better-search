@@ -229,7 +229,7 @@ Total Files: ${Object.keys(files).length}\n`;
 
       // run through each match and update position to add 
       // hightlight for all matches
-      let index: number = 0;
+      let index = 0;
       matches.forEach(match => {
         const position = index === 0 ? index : index + match.length;
         index = result.content.indexOf(match, position);
