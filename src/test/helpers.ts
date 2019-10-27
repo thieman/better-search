@@ -19,8 +19,8 @@ export const delay = (ms: number): Promise<void> => new Promise((resolve, reject
  * Get path to samples folder
  * @param folder folder with samples.
  */
-export const getSamplesLocation = (folder: string = ''): string => {
-    return path.resolve(WORKSPACE_ROOT.uri.fsPath, folder);
+export const getSamplesLocation = (folder=''): string => {
+    return path.resolve(WORKSPACE_ROOT.uri.fsPath, 'doc', folder);
 };
 
 /**
@@ -29,6 +29,11 @@ export const getSamplesLocation = (folder: string = ''): string => {
  * @return search result in string
  */
 export const runBetterSearch = async (partialOpts: Partial<SearchOptions>): Promise<string> => {
+    // Necessary for results to always match our fixtures
+    partialOpts.sortFiles = 'true';
+    if (partialOpts.context === undefined) {
+        partialOpts.context = 2;
+    }
     await vscode.commands.executeCommand('betterSearch.search', partialOpts);
     const editor = vscode.window!.activeTextEditor!;
     return normalizeResultPaths(editor.document.getText());

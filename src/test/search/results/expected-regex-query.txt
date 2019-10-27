@@ -1,5 +1,5 @@
 Search Query (RegEx): foo|bar|Baz
-Containing Folder: __samples__/search
+Containing Folder: better-search/doc/search
 Total Results: 38
 Total Files: 12
 

@@ -1,5 +1,5 @@
 Search Query: foo
-Containing Folder: __samples__/search/js
+Containing Folder: better-search/doc/search/js
 Total Results: 3
 Total Files: 1
 

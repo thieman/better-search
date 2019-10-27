@@ -1,4 +1,4 @@
 Search Query: foo
-Containing Folder: __samples__/search/wrong-folder
+Containing Folder: better-search/doc/search/wrong-folder
 Total Results: 0
 Total Files: 0

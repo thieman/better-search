@@ -1,5 +1,5 @@
 Search Query: foo
-Containing Folder: __samples__/search
+Containing Folder: better-search/doc/search
 Total Results: 11
 Total Files: 4
 
