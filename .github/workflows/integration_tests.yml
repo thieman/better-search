@@ -1,0 +1,36 @@
+name: Integration Tests
+on: 
+  - push
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-18.04
+          - windows-latest
+          - macOS-latest
+
+    runs-on: ${{matrix.os}}
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Use Node.js 10
+      uses: actions/setup-node@v1
+      with:
+        node-version: '10.x'
+
+    - name: Start xvfb
+      run: |
+        /usr/bin/Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &      
+      if: matrix.os == 'ubuntu-18.04'
+
+    - name: Run tests
+      run: |
+        npm install
+        npm test
+      env:
+        CI: true
+        DISPLAY: ':99.0'
