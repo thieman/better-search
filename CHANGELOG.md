@@ -7,7 +7,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [0.0.7] - Unreleased
 
 - Added language detection support for Ruby and JSX (@msaspence)
-- Fixed a bug when only the first match was highlighted (@bogdan0083)
+- Fixes an issue where only the first match of the query was highlighted in each result line (@bogdan0083)
 
 ## [0.0.6] - 2019-10-12
 
