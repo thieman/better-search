@@ -9,58 +9,58 @@ import { getSamplesLocation, read, runBetterSearch } from '../helpers';
  */
 
 // TODO: fix tests on unix-based systems (path separators issue)
-describe('search', () => {
+suite('search', () => {
 
 	// close active editor after each test
-	afterEach( async () => {
+	teardown( async () => {
 		const activeEditor = vscode.window.activeTextEditor;
 		if (activeEditor) {
 			await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
 		}
 	});
 
-	it('should show error if query is empty or undefined', done => {
+	test('should show error if query is empty or undefined', done => {
 		runBetterSearch({ query: '' })
 			.then(() => done('failed'))
 			.catch(() => done());
 	});
 
-	it('should work but find no results', async () => {
+	test('should work but find no results', async () => {
 		const location = getSamplesLocation('search/wrong-folder');
 		const expected = read('search/results/expected-no-results.txt');
 		const result = await runBetterSearch({ query: 'foo', location });
 		expect(result).to.equal(expected);
 	});
 
-	it('should work with multiple extensions', async () => {
+	test('should work with multiple extensions', async () => {
 		const location = getSamplesLocation('search');
 		const expected = read('search/results/expected-multiple-extensions.txt');
 		const result = await runBetterSearch({ query: 'foo', location });
 		expect(result).to.equal(expected);
 	});
 
-	it('should work with single extension', async () => {
+	test('should work with single extension', async () => {
 		const location = getSamplesLocation('search/js');
 		const expected = read('search/results/expected-single-extension.txt');
 		const result = await runBetterSearch({ query: 'foo', location });
 		expect(result).to.equal(expected);
 	});
 
-	it('should work with regex query', async () => {
+	test('should work with regex query', async () => {
 		const location = getSamplesLocation('search');
 		const expected = read('search/results/expected-regex-query.txt');
 		const result = await runBetterSearch({ query: 'foo|bar|Baz', location, queryRegex: true });
 		expect(result).to.equal(expected);
 	});
 
-	it('should work with context option set to 0', async () => {
+	test('should work with context option set to 0', async () => {
 		const location = getSamplesLocation('search');
 		const expected = read('search/results/expected-context-0.txt');
 		const result = await runBetterSearch({ query: 'foo|bar|Baz', location, queryRegex: true, context: 0 });
 		expect(result).to.equal(expected);
 	});
 
-	it('should work with context option set to 5', async () => {
+	test('should work with context option set to 5', async () => {
 		const location = getSamplesLocation('search');
 		const expected = read('search/results/expected-context-5.txt');
 		const result = await runBetterSearch({ query: 'foo', location, context: 5 });
