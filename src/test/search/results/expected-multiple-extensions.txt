@@ -1,0 +1,55 @@
+Search Query: foo
+Containing Folder: better-search/doc/search
+Total Results: 11
+Total Files: 4
+
+File: cpp/foo.cpp
+1   #include <stdio.h> 
+2   void foo(int x) 
+3   { 
+4      x = 30; 
+- - - - - - - - - - - - - - - - - - - - - - - - - - -
+8   { 
+9       int x = 20; 
+10       foo(x); 
+11       printf("x = %d", x); 
+12       return 0; 
+
+File: js/foo.js
+1   var express = require('express');
+2   
+3   var foo = express();
+4   
+5   foo.get('/', function(req, res){
+6     res.send('Hello World');
+7   });
+- - - - - - - - - - - - - - - - - - - - - - - - - - -
+9   /* istanbul ignore next */
+10   if (!module.parent) {
+11     foo.listen(3000);
+12     console.log('Express started on port 3000');
+13   }
+
+File: py/foo.py
+1   for i in range(1, 101):
+2       if i % 15 == 0:
+3           foo = "FizzBuzz"
+4       elif i % 3 == 0:
+5           foo = "Fizz"
+6       elif i % 5 == 0:
+7           foo = "Buzz"
+8       else:
+9           foo = i
+
+File: ts/foo.ts
+9       createCardPicker(this: Deck): () => Card;
+10   }
+11   let foo: Deck = {
+12       suits: ["hearts", "spades", "clubs", "diamonds"],
+13       cards: Array(52),
+- - - - - - - - - - - - - - - - - - - - - - - - - - -
+23   }
+24   
+25   let cardPicker = foo.createCardPicker();
+26   let pickedCard = cardPicker();
+27   

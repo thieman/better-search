@@ -1,0 +1,181 @@
+Search Query (RegEx): foo|bar|Baz
+Containing Folder: better-search/doc/search
+Total Results: 38
+Total Files: 12
+
+File: cpp/bar.cpp
+8   int main() 
+9   { 
+10       vector<int> bar; 
+11     
+12       for (int i = 1; i <= 5; i++) 
+13           bar.push_back(i); 
+14     
+15       cout << "Output of begin and end: "; 
+16       for (auto i = bar.begin(); i != bar.end(); ++i) 
+17           cout << *i << " "; 
+18     
+19       cout << "\nOutput of cbegin and cend: "; 
+20       for (auto i = bar.cbegin(); i != bar.cend(); ++i) 
+21           cout << *i << " "; 
+22     
+23       cout << "\nOutput of rbegin and rend: "; 
+24       for (auto ir = bar.rbegin(); ir != bar.rend(); ++ir) 
+25           cout << *ir << " "; 
+26     
+27       cout << "\nOutput of crbegin and crend : "; 
+28       for (auto ir = bar.crbegin(); ir != bar.crend(); ++ir) 
+29           cout << *ir << " "; 
+30     
+
+File: cpp/baz.cpp
+4   #include <bits/stdc++.h> 
+5   using namespace std; 
+6   class Baz 
+7   { 
+8       // Access specifier 
+- - - - - - - - - - - - - - - - - - - - - - - - - - -
+22     
+23       // Declare an object of class geeks 
+24       Baz obj1; 
+25     
+26       // accessing data member 
+
+File: cpp/foo.cpp
+1   #include <stdio.h> 
+2   void foo(int x) 
+3   { 
+4      x = 30; 
+- - - - - - - - - - - - - - - - - - - - - - - - - - -
+8   { 
+9       int x = 20; 
+10       foo(x); 
+11       printf("x = %d", x); 
+12       return 0; 
+
+File: js/bar.js
+1   var bar = ['apple', 'banana', 'grapes', 'mango', 'orange'];
+2   
+3   /**
+- - - - - - - - - - - - - - - - - - - - - - - - - - -
+10   }
+11   
+12   console.log(filterItems(bar, 'ap')); // ['apple', 'grapes']
+13   console.log(filterItems(bar, 'an')); // ['banana', 'mango', 'orange']
+
+File: js/baz.js
+1   class Baz {
+2     constructor(x, y) {
+3       this.x = x;
+- - - - - - - - - - - - - - - - - - - - - - - - - - -
+13   }
+14   
+15   const p1 = new Baz(5, 5);
+16   const p2 = new Baz(10, 10);
+17   
+18   console.log(Baz.distance(p1, p2));
+
+File: js/foo.js
+1   var express = require('express');
+2   
+3   var foo = express();
+4   
+5   foo.get('/', function(req, res){
+6     res.send('Hello World');
+7   });
+- - - - - - - - - - - - - - - - - - - - - - - - - - -
+9   /* istanbul ignore next */
+10   if (!module.parent) {
+11     foo.listen(3000);
+12     console.log('Express started on port 3000');
+13   }
+
+File: py/bar.py
+6   funcs = [multiply, add]
+7   for i in range(5):
+8       bar = list(map(lambda x: x(i), funcs))
+9       print(bar)
+10   
+11   # Output:
+
+File: py/baz.py
+1   class Baz(object):
+2       # pi is a class variable
+3       pi = 3.142
+- - - - - - - - - - - - - - - - - - - - - - - - - - -
+10           return self.pi * (self.radius ** 2)
+11   
+12   a = Baz(32)
+13   a.area()
+14   # Output: 3217.408
+- - - - - - - - - - - - - - - - - - - - - - - - - - -
+19   # Output: 43
+20   
+21   b = Baz(44)
+22   b.area()
+23   # Output: 6082.912
+
+File: py/foo.py
+1   for i in range(1, 101):
+2       if i % 15 == 0:
+3           foo = "FizzBuzz"
+4       elif i % 3 == 0:
+5           foo = "Fizz"
+6       elif i % 5 == 0:
+7           foo = "Buzz"
+8       else:
+9           foo = i
+
+File: ts/bar.ts
+3   
+4   // @ts-ignore
+5   function bar(x): any {
+6       // Check to see if we're working with an object/array
+7       // if so, they gave us the deck and we'll pick the card
+- - - - - - - - - - - - - - - - - - - - - - - - - - -
+18   
+19   let myDeck = [{ suit: "diamonds", card: 2 }, { suit: "spades", card: 10 }, { suit: "hearts", card: 4 }];
+20   let pickedCard1 = myDeck[bar(myDeck)];
+21   // @ts-ignore
+22   alert("card: " + pickedCard1.card + " of " + pickedCard1.suit);
+23   
+24   let pickedCard2 = bar(15);
+25   // @ts-ignore
+26   alert("card: " + pickedCard2.card + " of " + pickedCard2.suit);
+
+File: ts/baz.ts
+1   // @ts-ignore
+2   class Baz {
+3       name: string;
+4       constructor(theName: string) { this.name = theName; }
+- - - - - - - - - - - - - - - - - - - - - - - - - - -
+8   }
+9   
+10   class Snake extends Baz {
+11       constructor(name: string) { super(name); }
+12       move(distanceInMeters = 5) {
+- - - - - - - - - - - - - - - - - - - - - - - - - - -
+16   }
+17   
+18   class Horse extends Baz {
+19       constructor(name: string) { super(name); }
+20       move(distanceInMeters = 45) {
+- - - - - - - - - - - - - - - - - - - - - - - - - - -
+25   
+26   let sam = new Snake("Sammy the Python");
+27   let tom: Baz = new Horse("Tommy the Palomino");
+28   
+29   sam.move();
+
+File: ts/foo.ts
+9       createCardPicker(this: Deck): () => Card;
+10   }
+11   let foo: Deck = {
+12       suits: ["hearts", "spades", "clubs", "diamonds"],
+13       cards: Array(52),
+- - - - - - - - - - - - - - - - - - - - - - - - - - -
+23   }
+24   
+25   let cardPicker = foo.createCardPicker();
+26   let pickedCard = cardPicker();
+27   

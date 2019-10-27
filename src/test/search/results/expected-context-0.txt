@@ -1,0 +1,66 @@
+Search Query (RegEx): foo|bar|Baz
+Containing Folder: better-search/doc/search
+Total Results: 38
+Total Files: 12
+
+File: cpp/bar.cpp
+10       vector<int> bar; 
+13           bar.push_back(i); 
+16       for (auto i = bar.begin(); i != bar.end(); ++i) 
+20       for (auto i = bar.cbegin(); i != bar.cend(); ++i) 
+24       for (auto ir = bar.rbegin(); ir != bar.rend(); ++ir) 
+28       for (auto ir = bar.crbegin(); ir != bar.crend(); ++ir) 
+
+File: cpp/baz.cpp
+6   class Baz 
+24       Baz obj1; 
+
+File: cpp/foo.cpp
+2   void foo(int x) 
+10       foo(x); 
+
+File: js/bar.js
+1   var bar = ['apple', 'banana', 'grapes', 'mango', 'orange'];
+12   console.log(filterItems(bar, 'ap')); // ['apple', 'grapes']
+13   console.log(filterItems(bar, 'an')); // ['banana', 'mango', 'orange']
+
+File: js/baz.js
+1   class Baz {
+15   const p1 = new Baz(5, 5);
+16   const p2 = new Baz(10, 10);
+18   console.log(Baz.distance(p1, p2));
+
+File: js/foo.js
+3   var foo = express();
+5   foo.get('/', function(req, res){
+11     foo.listen(3000);
+
+File: py/bar.py
+8       bar = list(map(lambda x: x(i), funcs))
+9       print(bar)
+
+File: py/baz.py
+1   class Baz(object):
+12   a = Baz(32)
+21   b = Baz(44)
+
+File: py/foo.py
+3           foo = "FizzBuzz"
+5           foo = "Fizz"
+7           foo = "Buzz"
+9           foo = i
+
+File: ts/bar.ts
+5   function bar(x): any {
+20   let pickedCard1 = myDeck[bar(myDeck)];
+24   let pickedCard2 = bar(15);
+
+File: ts/baz.ts
+2   class Baz {
+10   class Snake extends Baz {
+18   class Horse extends Baz {
+27   let tom: Baz = new Horse("Tommy the Palomino");
+
+File: ts/foo.ts
+11   let foo: Deck = {
+25   let cardPicker = foo.createCardPicker();
