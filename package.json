@@ -114,7 +114,7 @@
     "@types/request": "^2.48.4",
     "@types/shell-escape": "^0.2.0",
     "@types/tar-fs": "^1.16.1",
-    "execa": "^3.4.0",
+    "execa": "^4.0.0",
     "github-releases": "^0.4.1",
     "gunzip-maybe": "^1.4.1",
     "progress": "^2.0.0",
