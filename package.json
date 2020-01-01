@@ -111,7 +111,7 @@
     "vscode": "^1.1.25"
   },
   "dependencies": {
-    "@types/request": "^2.48.1",
+    "@types/request": "^2.48.4",
     "@types/shell-escape": "^0.2.0",
     "@types/tar-fs": "^1.16.1",
     "execa": "^3.4.0",
