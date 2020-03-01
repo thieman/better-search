@@ -1,3 +1,9 @@
+## UNMAINTAINED ##
+
+This extension is no longer maintained. VS Code finally built this type of search view into the editor natively! The original issue for that is [here](https://github.com/microsoft/vscode/issues/23931).
+
+This repo will be archived as read-only and no longer worked on. Feel free to fork it per its MIT license if you'd like to use or extend it yourself.
+
 # Better Search
 
 This extension adds a new search functionality that presents your results in a full window. This approach is borrowed from Sublime Text, many Emacs modes, and various other common editors.
