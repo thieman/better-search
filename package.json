@@ -118,7 +118,7 @@
     "github-releases": "^0.4.1",
     "gunzip-maybe": "^1.4.1",
     "progress": "^2.0.0",
-    "request": "^2.88.0",
+    "request": "^2.88.2",
     "rimraf": "^3.0.1",
     "tar-fs": "^2.0.0",
     "vscode-ripgrep": "^1.2.5",
